@@ -7,4 +7,4 @@ import pandas as pd
 def from_numpy(array):
     """ Create dataframe from numpy array """
     cols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    return pd.DataFrame(array, columns=list(cols[array.shape[1]]))
+    return pd.DataFrame(array, columns=list(cols[:array.shape[1]]))
