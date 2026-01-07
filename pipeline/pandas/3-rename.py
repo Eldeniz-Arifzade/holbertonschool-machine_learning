@@ -7,5 +7,5 @@ import pandas as pd
 def rename(df):
     """ Rename column """
     df.rename(columns={'Timestamp': 'Datetime'}, inplace=True)
-    df['Datetime'] = pd.to_datetime(df['Datetime'], units='s')
+    df['Datetime'] = pd.to_datetime(df['Datetime'], unit='s')
     return df[['Datetime', 'Close']]
