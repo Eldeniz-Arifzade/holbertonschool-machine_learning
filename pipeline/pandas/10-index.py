@@ -4,4 +4,4 @@
 
 def index(df):
     """ Set Timestamp col as index of df """
-    return df.reindex(index=df['Timestamp'])
+    return df.set_index('Timestamp')
