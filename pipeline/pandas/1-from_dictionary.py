@@ -9,4 +9,4 @@ df = pd.DataFrame(
      'Second': ['one', 'two', 'three', 'four']
     },
     index=['A', 'B', 'C', 'D']
-)
+    )
