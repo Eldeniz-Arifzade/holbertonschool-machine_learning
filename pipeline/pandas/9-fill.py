@@ -8,5 +8,6 @@ def fill(df):
     df['Close'] = df['Close'].fillna(method='ffill', axis=0)
     for col in ['High', 'Low', 'Open']:
         df[col] = df[col].fillna(df['Close'])
-    df[['Volume_(BTC)', 'Volume_(Currency)']] = df[['Volume_(BTC)', 'Volume_(Currency)']].fillna(0)
+    cols = ['Volume_(BTC)', 'Volume_(Currency)']
+    df[cols] = df[cols].fillna(0)
     return df
