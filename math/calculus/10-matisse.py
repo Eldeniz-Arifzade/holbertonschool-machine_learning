@@ -7,6 +7,6 @@ def poly_derivative(poly):
     d_poly = []
     for idx, power in enumerate(poly):
         d_poly.append(idx * power)
-    if len(d_poly) == 0:
+    if len(d_poly) == 1:
         return 0
     return d_poly[1:]
