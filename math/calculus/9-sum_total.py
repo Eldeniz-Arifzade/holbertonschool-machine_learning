@@ -6,4 +6,4 @@ def summation_i_squared(n):
     """ Sum of squares """
     if n < 1:
         return None
-    return n**2 + summation_i_squared(n-1)
+    return n**2 + int(summation_i_squared(n-1))
