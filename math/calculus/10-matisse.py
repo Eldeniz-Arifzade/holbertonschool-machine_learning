@@ -5,7 +5,7 @@
 def poly_derivative(poly):
     """ Function for calculating derivative of polynomial """
     d_poly = []
-    if not isinstance(poly, list):
+    if not isinstance(poly, list) or len(poly) == 0:
         return None
     for idx, power in enumerate(poly):
         d_poly.append(idx * power)
