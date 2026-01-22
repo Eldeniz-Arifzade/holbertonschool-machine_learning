@@ -8,5 +8,5 @@ def poly_integral(poly, C=0):
         return None
     poly_integral = [C]
     for idx, power in enumerate(poly):
-        poly_integral.append(idx / (power + 1))
+        poly_integral.append(power / (idx + 1))
     return poly_integral
