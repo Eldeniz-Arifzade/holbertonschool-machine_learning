@@ -8,5 +8,9 @@ def poly_integral(poly, C=0):
         return None
     poly_integral = [C]
     for idx, power in enumerate(poly):
-        poly_integral.append(power / (idx + 1))
+        element = power / (idx + 1)
+        if element == int(element):
+            poly_integral.append(int(element))
+        else:
+            poly_integral.append(element)
     return poly_integral
