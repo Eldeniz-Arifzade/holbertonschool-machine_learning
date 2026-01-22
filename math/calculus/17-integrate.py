@@ -13,4 +13,6 @@ def poly_integral(poly, C=0):
             poly_integral.append(int(element))
         else:
             poly_integral.append(element)
+    if poly_integral[-1] == 0:
+        poly_integral.pop()
     return poly_integral
