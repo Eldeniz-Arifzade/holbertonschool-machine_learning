@@ -4,5 +4,5 @@
 
 def cat_arrays(arr1, arr2):
     """ Function for concatinating arrays """
-    arr = arr1.extend(arr2)
-    return arr
+    arr1.extend(arr2)
+    return arr1
