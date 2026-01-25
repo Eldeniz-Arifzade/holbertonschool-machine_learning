@@ -5,7 +5,7 @@
 def add_matrices(mat1, mat2):
     """ Add 2 matrices """
     result = []
-    if type(mat1) == type(mat2) == list:
+    if type(mat1) is list and type(mat2) is list:
         if len(mat1) == len(mat2):
             for i in range(len(mat1)):
                 sub = add_matrices(mat1[i], mat2[i])
