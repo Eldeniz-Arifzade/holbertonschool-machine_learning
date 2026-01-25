@@ -4,7 +4,5 @@
 
 def matrix_transpose(matrix):
     """ Return transpose of 2D matrix """
-    for i in range(matrix):
-        for j in range(i + 1, matrix[0]):
-            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
-    return matrix
+    new matrix = [[matrix[j][i] for j in range(len(matrix[0]))] for i in range(len(matrix))]
+    return new_matrix
