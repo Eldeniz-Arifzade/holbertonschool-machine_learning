@@ -7,7 +7,7 @@ def cat_matrices(mat1, mat2, axis=0):
     def shape(matrix):
         """ Shape of a matrix """
         dims = []
-        if type(matrix) is list:
+        while type(matrix) is list:
             dims.append(len(matrix))
             matrix = matrix[0]
         return tuple(dims)
@@ -15,7 +15,7 @@ def cat_matrices(mat1, mat2, axis=0):
     shape1 = shape(mat1)
     shape2 = shape(mat2)
 
-    if axis < 0 or axis >= len(mat1) or axis >= len(mat2):
+    if axis < 0 or axis >= len(shape1) or axis >= len(shape2):
         return None
     
     for i in range(len(shape1)):
@@ -29,3 +29,4 @@ def cat_matrices(mat1, mat2, axis=0):
     for i in range(len(mat1)):
         result.append(cat_matrices(mat1[i], mat2[i], axis - 1))
     
+    return result
