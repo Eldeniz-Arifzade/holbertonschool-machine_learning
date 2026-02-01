@@ -25,7 +25,8 @@ def minor(matrix):
             return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
         D = 0
         for j in range(length):
-            D += matrix[0][j] * (-1) ** j * determinant(new_matrix(matrix, 0, j))
+            det = determinant(new_matrix(matrix, 0, j))
+            D += matrix[0][j] * (-1) ** j * det
         return D
 
     if not isinstance(matrix, list) or not all(isinstance(row, list)
@@ -39,7 +40,7 @@ def minor(matrix):
             raise ValueError('matrix must be a non-empty square matrix')
 
     return [
-        [determinant(new_matrix(matrix, i, j)) 
-        for j in range(length)] 
-        for i in range(length)
+        [determinant(new_matrix(matrix, i, j))
+         for j in range(length)]
+         for i in range(length)
     ]
