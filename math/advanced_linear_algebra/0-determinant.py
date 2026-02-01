@@ -12,7 +12,7 @@ def determinant(matrix):
         ]
     if matrix == [[]]:
         return 1
-    if not isinstance(matrix, list) or not all(isinstance(row, list) 
+    if not isinstance(matrix, list) or not all(isinstance(row, list)
        for row in matrix):
         raise TypeError('matrix must be a list of lists')
     length = len(matrix)
