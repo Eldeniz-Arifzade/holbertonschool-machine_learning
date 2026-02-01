@@ -3,7 +3,7 @@
 
 
 def inverse(matrix):
-    """ Function for calculating adjugate matrix of a matrix """
+    """ Function for calculating inverse of a matrix """
 
     def new_matrix(matrix, row_id, col_id):
         """ Minor of a matrix """
@@ -57,4 +57,3 @@ def inverse(matrix):
         ]
         for i in range(length)
     ]
-
