@@ -40,8 +40,9 @@ def minor(matrix):
             raise ValueError('matrix must be a non-empty square matrix')
 
     return [
-        [determinant(new_matrix(matrix, i, j))
-         for j in range(length)
+        [
+            determinant(new_matrix(matrix, i, j))
+            for j in range(length)
         ]
         for i in range(length)
     ]
