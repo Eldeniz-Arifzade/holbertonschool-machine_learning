@@ -41,6 +41,7 @@ def minor(matrix):
 
     return [
         [determinant(new_matrix(matrix, i, j))
-         for j in range(length)]
-         for i in range(length)
+         for j in range(length)
+        ]
+        for i in range(length)
     ]
