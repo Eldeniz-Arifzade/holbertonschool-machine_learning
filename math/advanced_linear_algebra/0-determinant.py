@@ -11,7 +11,7 @@ def determinant(matrix):
             for row in matrix[1:]
         ]
     if matrix is [[]]:
-        raise TypeError('matrix must be a list of lists')
+        return 1
     if (isinstance(matrix, list)) and (isinstance(matrix[0],list)) and (isinstance(matrix[0][0], int) or isinstance(matrix[0][0], float)):
         length = len(matrix)
         if length == 1:
