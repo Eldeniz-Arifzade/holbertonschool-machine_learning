@@ -12,7 +12,7 @@ def determinant(matrix):
         ]
     if matrix == [[]]:
         return 1
-    if (isinstance(matrix, list)) and (len(matrix != 0) and isinstance(matrix[0],list)) and (isinstance(matrix[0][0], int) or isinstance(matrix[0][0], float)):
+    if (isinstance(matrix, list)) and (len(matrix) != 0 and isinstance(matrix[0],list)) and (isinstance(matrix[0][0], int) or isinstance(matrix[0][0], float)):
         length = len(matrix)
         if length == 1:
             return matrix[0][0]
