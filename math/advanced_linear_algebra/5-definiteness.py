@@ -12,7 +12,7 @@ def definiteness(matrix):
     if matrix.ndim != 2 or (matrix.shape[0] != matrix.shape[1]):
         return None
 
-    if matrix != matrix.T:
+    if np.array_equal(matrix, matrix.T):
         return None
 
     eigenvals = np.linalg.eigvals(matrix)
