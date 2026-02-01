@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """ This module will define a function for calculating determinant """
 
 
