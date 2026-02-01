@@ -27,7 +27,7 @@ def minor(matrix):
         for j in range(length):
             D += matrix[0][j] * (-1) ** j * determinant(new_matrix(matrix, 0, j))
         return D
-    
+
     if not isinstance(matrix, list) or not all(isinstance(row, list)
        for row in matrix):
         raise TypeError('matrix must be a list of lists')
@@ -39,5 +39,7 @@ def minor(matrix):
             raise ValueError('matrix must be a non-empty square matrix')
 
     return [
-        [determinant(new_matrix(matrix, i, j)) for j in range(length)] for i in range(length)
+        [determinant(new_matrix(matrix, i, j)) 
+        for j in range(length)] 
+        for i in range(length)
     ]
