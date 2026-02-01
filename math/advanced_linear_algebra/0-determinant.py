@@ -10,11 +10,10 @@ def determinant(matrix):
             row[:col] + row[col+1:]
             for row in matrix[1:]
         ]
+    if matrix == [[]]:
+        return 1
     if (isinstance(matrix, list)) and (isinstance(matrix[0],list)) and (isinstance(matrix[0][0], int) or isinstance(matrix[0][0], float)):
         length = len(matrix)
-        if length == 0:
-            return 1
-        
         if length == 1:
             return matrix[0][0]
 
