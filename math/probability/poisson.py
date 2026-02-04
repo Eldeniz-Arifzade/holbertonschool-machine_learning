@@ -7,9 +7,9 @@ class Poisson():
     def __init__(self, data=None, lambtha=1.):
         """ Function for initializing class """
         if data is None:
-            self.data = lambtha
             if lambtha <= 0:
                 raise ValueError('lambtha must be a positive value')
+            self.lambtha = lambtha
         elif not isinstance(data, list):
             raise TypeError('data must be a list')
         elif len(data) < 2:
