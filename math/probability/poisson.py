@@ -21,7 +21,7 @@ class Poisson():
         """ Calculates the value of PMF for given num of success """
         if not isinstance(k, int):
             self.k = int(k)
-        if k > sum(data):
+        if k > sum(self.data):
             return 0
         f = 1
         for i in range(2, k+1):
