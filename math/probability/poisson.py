@@ -20,7 +20,7 @@ class Poisson():
     def pmf(self, k):
         """ Calculates the value of PMF for given num of success """
         if not isinstance(k, int):
-            self.k = int(k)
+            k = int(k)
         if k < 0:
             return 0
         f = 1
