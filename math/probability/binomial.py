@@ -43,4 +43,4 @@ class Binomial():
         if k < 0:
             return 0
         coef = f(self.n) / f(k) / f(self.n - k)
-        return coef * p ** k * (1 - p) ** (self.n - k)
+        return coef * self.p ** k * (1 - self.p) ** (self.n - k)
