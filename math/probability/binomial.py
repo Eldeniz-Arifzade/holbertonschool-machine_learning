@@ -28,3 +28,19 @@ class Binomial():
             p = mean / n
             self.p = p
             self.n = n
+
+    def pmf(self, k):
+        """ Calculate pmf for given value k """
+        def f(n):
+            """ Helper factorial func """
+            h = 1
+            for i in range(2, n+1):
+                h = h * i
+            return h
+        
+        if not isinstance(k, int):
+            k = int(k)
+        if k < 0:
+            return 0
+        coef = f(self.n) / f(k) / f(self.n - k)
+        return coef * p ** k * (1 - p) ** (self.n - k)
