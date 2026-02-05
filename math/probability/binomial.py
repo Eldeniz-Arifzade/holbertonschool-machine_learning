@@ -43,3 +43,16 @@ class Binomial():
             return 0
         coef = f(self.n) / f(k) / f(self.n - k)
         return coef * self.p ** k * (1 - self.p) ** (self.n - k)
+
+    def cdf(self, k):
+        """ Calculate cdf for given value k """
+        if not isinstance(k, int):
+            k = int(k)
+        if k < 0:
+            return 0
+        if k >= self.n:
+            return 1
+        cdf_val = 0
+        for i in range(0, k+1):
+            cdf_val += self.pmf(i)
+        return cdf_val
