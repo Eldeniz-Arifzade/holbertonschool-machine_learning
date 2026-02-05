@@ -33,5 +33,6 @@ class Normal():
     def pdf(self, x):
         """ Calculate PDF value for given x """
         return (1 / ((2 * 3.1415926536) ** (1 / 2) * self.stddev)
-               * 2.7182818285 ** ((-(x - self.mean) ** 2) / (2 * self.stddev ** 2))
-               )
+                * 2.7182818285 ** ((-(x - self.mean) ** 2) /
+                (2 * self.stddev ** 2))
+                )
