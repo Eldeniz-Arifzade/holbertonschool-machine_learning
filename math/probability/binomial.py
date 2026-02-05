@@ -37,7 +37,6 @@ class Binomial():
             for i in range(2, n+1):
                 h = h * i
             return h
-        
         if not isinstance(k, int):
             k = int(k)
         if k < 0:
