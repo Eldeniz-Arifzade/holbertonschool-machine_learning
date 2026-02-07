@@ -30,7 +30,7 @@ def intersection(x, n, P, Pr):
         raise ValueError('All values in P must be in the range [0, 1]')
     elif np.max(Pr) > 1 or np.min(Pr) < 0:
         raise ValueError('All values in Pr must be in the range [0, 1]')
-    elif np.sum(Pr) != 1:
+    elif np.isclose(np.sum(Pr), 1):
         raise ValueError('Pr must sum to 1')
     C = factorial(n) / (factorial(x) * factorial(n - x))
     p = C * (P ** x) * ((1 - P) ** (n - x))
