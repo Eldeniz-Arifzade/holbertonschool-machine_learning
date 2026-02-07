@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """ This module will define a function namd likelihood """
+import numpy as np
 
 
 def likelihood(x, n, P):
