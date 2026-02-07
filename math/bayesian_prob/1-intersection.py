@@ -34,4 +34,4 @@ def intersection(x, n, P, Pr):
         raise ValueError('Pr must sum to 1')
     C = factorial(n) / (factorial(x) * factorial(n - x))
     p = C * (P ** x) * ((1 - P) ** (n - x))
-    return p[np.isclose(p, pr)]
+    return p[np.isclose(p, Pr)]
