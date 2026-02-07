@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def intersection(x, n, P, Pr):
+def marginal(x, n, P, Pr):
     """ Function for calculating marginal
     probability of obtaining the data
     """
