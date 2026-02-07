@@ -1,8 +1,5 @@
 """ Advanced task #1 """
-
-
 #!/usr/bin/env python3
-""" This module will define a function named posterior """
 from scipy import special
 
 
