@@ -3,7 +3,6 @@
 
 #!/usr/bin/env python3
 """ This module will define a function named posterior """
-import numpy as np
 from scipy import special
 
 
