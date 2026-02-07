@@ -4,8 +4,9 @@ import numpy as np
 
 
 def likelihood(x, n, P):
-    """ Function for calculating likelihood of 
-    obtaining data given probability of side effects """
+    """ Function for calculating likelihood of
+    obtaining data given probability of side effects
+    """
 
     def factorial(n):
         """ Helper func for calculating factorial """
