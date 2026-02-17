@@ -13,6 +13,6 @@ def specificity(confusion):
         fn = np.sum(confusion[i]) - confusion[i][i]
         N = np.sum(confusion)
         tn = N - fn - tp - fp
-        tn_fp = N + fp
+        tn_fp = tn + fp
         arr[i] = tn / tn_fp
     return arr
