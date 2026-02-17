@@ -8,7 +8,11 @@ def specificity(confusion):
     classes = confusion.shape[0]
     arr = np.zeros(classes)
     for i in range(classes):
-        tn_fp = classes - np.sum(confusion[i])
-        tn = classes - confusion[i][i]
-        arr[i] = tn_fp / tn
+        fp = np.sum(confusion[:, i]) - confusion[i, i]
+        tp = tp = confusion[i][i]
+        fn = np.sum(confusion[i]) - confusion[i][i]
+        N = np.sum(confusion)
+        tn = N - fn - tp - fp
+        tn_fp = N + fp
+        arr[i] = tn / tn_fp
     return arr
