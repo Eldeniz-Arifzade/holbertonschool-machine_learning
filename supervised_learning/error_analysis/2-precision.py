@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """ Calculate precision of each class in confusion matrix """
+import numpy as np
 
 
 def precision(confusion):
