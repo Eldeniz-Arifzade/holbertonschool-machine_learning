@@ -198,7 +198,7 @@ class Decision_Tree:
     def fit(self, explanatory, target, verbose=0):
         """ Fit method """
         if self.split_criterion == "random":
-            self.split_criterion = self.random_split_criterion
+            self.split_criterion = self.Gini_split_criterion
         else:
             self.split_criterion = self.Gini_split_criterion
 
