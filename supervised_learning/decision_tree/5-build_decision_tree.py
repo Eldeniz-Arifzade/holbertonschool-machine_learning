@@ -86,7 +86,7 @@ class Node:
             """ check if feature satisfies lower bound """
             return np.all(
                 np.array([np.greater(x[:, key], self.lower[key])
-                for key in self.lower.keys()]),
+                         for key in self.lower.keys()]),
                 axis=0
             )
 
@@ -94,7 +94,7 @@ class Node:
             """ check if feature satisfies upper bound """
             return np.all(
                 np.array([np.less_equal(x[:, key], self.upper[key])
-                for key in self.upper.keys()]),
+                         for key in self.upper.keys()]),
                 axis=0
             )
 
