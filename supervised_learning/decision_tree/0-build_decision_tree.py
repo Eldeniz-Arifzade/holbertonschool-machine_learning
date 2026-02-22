@@ -18,8 +18,12 @@ class Node:
     def max_depth_below(self) :
         """ Function for finding depth of the tree """
         if self.is_leaf:
-            return 0
-        return 1 + max(self.left_child.max_depth_below(), self.right_child.max_depth_below())
+            return self.depth
+        return max(
+            self.depth,
+            self.left_child.max_depth_below(),
+            self.right_child.max_depth_below()
+        )
 
 class Leaf(Node):
     """ The leaf of the tree """
