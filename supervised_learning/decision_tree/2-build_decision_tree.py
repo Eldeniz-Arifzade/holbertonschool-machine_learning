@@ -61,7 +61,7 @@ class Node:
             label = f"-> node [feature={self.feature}, threshold={self.threshold}]"
         left_str = self.left_child_add_prefix(self.left_child.__str__())
         right_str = self.right_child_add_prefix(self.right_child.__str__())
-        return label + '\n' + left_str + right_str.rstrip('\n')
+        return label + '\n' + left_str + right_str
 
 class Leaf(Node):
     """ The leaf of the tree """
