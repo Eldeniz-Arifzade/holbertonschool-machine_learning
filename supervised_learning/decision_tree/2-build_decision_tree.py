@@ -54,16 +54,13 @@ class Node:
         return new_text
 
     def __str__(self):
-        """ Print node """
         if self.is_root:
-            label = (f"root [feature={self.feature},"
-                    f" threshold={self.threshold}]")
+            label = f"root [feature={self.feature}, threshold={self.threshold}]"
         else:
-            label = (f"-> node [feature={self.feature},"
-                    f" threshold={self.threshold}]")
+            label = f"-> node [feature={self.feature}, threshold={self.threshold}]"
         left_str = self.left_child_add_prefix(self.left_child.__str__())
         right_str = self.right_child_add_prefix(self.right_child.__str__())
-        return label + "\n" + left_str + right_str.rstrip("\n")
+        return label + "\n" + left_str + right_str  # remove .rstrip("\n")
 
 
 class Leaf(Node):
