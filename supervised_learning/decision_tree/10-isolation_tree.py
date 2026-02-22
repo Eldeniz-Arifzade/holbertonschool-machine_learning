@@ -29,6 +29,10 @@ class Isolation_Random_Tree() :
     def update_bounds(self):
         self.root.update_bounds_below()
 
+    def np_extrema(self, arr):
+    """ Return min and max values """
+    return np.min(arr), np.max(arr)
+
     def get_leaves(self):
         return self.root.get_leaves_below()
 
