@@ -73,6 +73,10 @@ class Leaf(Node):
         """ return current leaf """
         return [self]
 
+    def __str__(self):
+        """ Print the leaf of the tree """
+        return f"-> leaf [value={self.value}]"
+
 class Decision_Tree():
     """ Class for implementing Decision Tree """
     def __init__(self, max_depth=10, min_pop=1, seed=0,
