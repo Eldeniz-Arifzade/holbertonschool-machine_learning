@@ -31,7 +31,7 @@ class Isolation_Random_Tree() :
 
     def np_extrema(self, arr):
     """ Return min and max values """
-    return np.min(arr), np.max(arr)
+        return np.min(arr), np.max(arr)
 
     def get_leaves(self):
         return self.root.get_leaves_below()
