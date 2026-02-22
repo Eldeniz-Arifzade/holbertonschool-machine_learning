@@ -11,14 +11,24 @@ class Isolation_Random_Forest:
         self.seed = seed
         self.trees = []
 
-    def fit(self, explanatory, verbose=0):
+    def fit(self, explanatory, n_trees=100, verbose=0):
+        """Fit the isolation forest"""
+        self.explanatory = explanatory
         self.trees = []
-        for i in range(self.n_trees):
-            tree = Isolation_Random_Tree(max_depth=self.max_depth, seed=self.seed + i)
+        depths = []
+        nodes = []
+        leaves = []
+
+        for i in range(n_trees):
+            tree = Isolation_Random_Tree(max_depth=self.max_depth, seed=i)
             tree.fit(explanatory)
             self.trees.append(tree)
+            depths.append(tree.depth())
+            nodes.append(tree.count_nodes())
+            leaves.append(tree.count_nodes(only_leaves=True))
+
         if verbose == 1:
-            print(f"\nTraining finished.\n")
+            print("\nTraining finished.\n")
             print(f"Mean depth                     : {np.mean(depths)}")
             print(f"Mean number of nodes           : {np.mean(nodes)}")
             print(f"Mean number of leaves          : {np.mean(leaves)}\n")
