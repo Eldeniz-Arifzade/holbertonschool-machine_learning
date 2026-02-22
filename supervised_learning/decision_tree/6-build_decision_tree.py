@@ -193,3 +193,7 @@ class Decision_Tree():
             leaf.update_indicator()          
         self.predict = lambda A: np.sum(np.array([leaf.indicator(A) * leaf.value
                                         for leaf in leaves]), axis=0)
+
+    def pred(self,x):
+        """ Pred """
+        return self.root.pred(x)
