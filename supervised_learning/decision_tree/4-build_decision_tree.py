@@ -55,25 +55,25 @@ class Node:
         return leaves
 
     def update_bounds_below(self):
-        # Initialize root bounds
+        # Root init
         if self.is_root:
             self.lower = {0: -np.inf}
             self.upper = {0: np.inf}
 
-        # Update children bounds
         for child in [self.left_child, self.right_child]:
             if child is None:
                 continue
 
-            # Copy parent bounds first
+            # Start with empty dicts and only set the relevant bound
             child.lower = self.lower.copy()
             child.upper = self.upper.copy()
 
-            # Adjust according to split
             if self.feature is not None:
                 if child == self.left_child:
+                    # left child: upper bound = threshold, lower unchanged
                     child.upper[self.feature] = self.threshold
-                else:  # right child
+                else:
+                    # right child: lower bound = threshold, upper unchanged
                     child.lower[self.feature] = self.threshold
 
         # Recurse
