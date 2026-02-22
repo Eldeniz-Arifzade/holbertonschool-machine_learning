@@ -5,27 +5,26 @@ Isolation_Random_Tree = __import__('10-isolation_tree').Isolation_Random_Tree
 
 
 class Isolation_Random_Forest:
-    """Isolation Forest using multiple Isolation Random Trees"""
     def __init__(self, n_trees=100, max_depth=10, seed=0):
         self.n_trees = n_trees
         self.max_depth = max_depth
         self.seed = seed
         self.trees = []
-        self.rng = np.random.default_rng(seed)
 
     def fit(self, explanatory, verbose=0):
-        self.split_criterion = self.random_split_criterion
-        self.explanatory = explanatory
-        self.root.sub_population = np.ones(explanatory.shape[0], dtype='bool')
-
-        self.fit_node(self.root)
-        self.update_predict()
-
+        self.trees = []
+        for i in range(self.n_trees):
+            tree = Isolation_Random_Tree(max_depth=self.max_depth, seed=self.seed + i)
+            tree.fit(explanatory, verbose=0)  # <-- use the tree's fit, it has random_split_criterion
+            self.trees.append(tree)
         if verbose == 1:
+            depths = [tree.depth() for tree in self.trees]
+            nodes = [tree.count_nodes() for tree in self.trees]
+            leaves = [tree.count_nodes(only_leaves=True) for tree in self.trees]
             print(f"""  Training finished.
-    - Depth                     : {self.depth()}
-    - Number of nodes           : {self.count_nodes()}
-    - Number of leaves          : {self.count_nodes(only_leaves=True)}""")
+Mean depth                     : {np.mean(depths)}
+Mean number of nodes           : {np.mean(nodes)}
+Mean number of leaves          : {np.mean(leaves)}""")
 
     def suspects(self, explanatory, n_suspects):
         """Return indices of the top n_suspects likely outliers"""
