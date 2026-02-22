@@ -310,11 +310,9 @@ class Decision_Tree:
 
         # shape (n, t, c): is individual i > threshold j AND of class k?
         Left_F = (
-            (individuals[:, np.newaxis] > thresholds[np.newaxis, :]
-             )[:, :, np.newaxis]
-            & (classes[:, np.newaxis] == unique_classes[np.newaxis, :]
-               )[:, np.newaxis, :]
-            )
+            (individuals[:, np.newaxis] > thresholds[np.newaxis, :])[:, :, np.newaxis]
+            & (classes[:, np.newaxis] == unique_classes[np.newaxis, :])[:, np.newaxis, :]
+        )
 
         # total individuals in node
         n = individuals.shape[0]
