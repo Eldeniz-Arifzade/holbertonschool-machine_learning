@@ -310,8 +310,10 @@ class Decision_Tree:
 
         # shape (n, t, c): is individual i > threshold j AND of class k?
         Left_F = (
-            (individuals[:, np.newaxis] > thresholds[np.newaxis, :])[:, :, np.newaxis]
-            & (classes[:, np.newaxis] == unique_classes[np.newaxis, :])[:, np.newaxis, :]
+            (individuals[:, np.newaxis] > thresholds[np.newaxis, :]
+             )[:, :, np.newaxis]
+            & (classes[:, np.newaxis] == unique_classes[np.newaxis, :]
+               )[:, np.newaxis, :]
         )
 
         # total individuals in node
@@ -322,7 +324,8 @@ class Decision_Tree:
         left_sizes = left_counts.sum(axis=1)       # shape (t,)
 
         # right child counts
-        right_counts = (classes == unique_classes[:, np.newaxis]).T.sum(axis=0) - left_counts
+        right_counts = (classes == unique_classes[:, np.newaxis]).T.sum(axis=0
+                        ) - left_counts
         right_sizes = n - left_sizes               # shape (t,)
 
         # Gini = 1 - sum of squared proportions
