@@ -16,6 +16,8 @@ class Node:
         self.is_root = is_root
         self.sub_population = None
         self.depth = depth
+        self.lower = {}  # lower bounds per feature
+        self.upper = {}  # upper bounds per feature
 
     def max_depth_below(self):
         """ Function for finding depth of the tree """
@@ -52,6 +54,39 @@ class Node:
 
         return leaves
 
+    def update_bounds_below(self):
+        """ Update lower and upper bounds for each feature recursively """
+        # Initialize at root
+        if self.is_root:
+            self.lower = {}
+            self.upper = {}
+
+        for child in [self.left_child, self.right_child]:
+            if child is None:
+                continue
+
+            # Copy parent's bounds
+            child.lower = self.lower.copy()
+            child.upper = self.upper.copy()
+
+            # Update bounds based on split feature
+            if child == self.left_child:
+                # Left child: values <= threshold
+                child.upper[self.feature] = self.threshold
+            elif child == self.right_child:
+                # Right child: values > threshold
+                child.lower[self.feature] = self.threshold
+
+        # Recurse
+        for child in [self.left_child, self.right_child]:
+            if child is not None:
+                child.update_bounds_below()
+
+    def __str__(self):
+        """ Print node for debugging """
+        s = f"Node(feature={self.feature}, threshold={self.threshold})"
+        return s
+
 
 class Leaf(Node):
     """ The leaf of the tree """
@@ -73,6 +108,10 @@ class Leaf(Node):
     def get_leaves_below(self):
         """ return current leaf """
         return [self]
+
+    def update_bounds_below(self):
+        """ Leaf does not propagate bounds """
+        pass
 
     def __str__(self):
         """ Print the leaf of the tree """
@@ -107,7 +146,11 @@ class Decision_Tree():
     def get_leaves(self):
         """ list of all leaves """
         return self.root.get_leaves_below()
-    
+
+    def update_bounds(self):
+        """ Update lower and upper bounds for the entire tree """
+        self.root.update_bounds_below()
+
     def __str__(self):
         """ Print tree """
         return self.root.__str__()
