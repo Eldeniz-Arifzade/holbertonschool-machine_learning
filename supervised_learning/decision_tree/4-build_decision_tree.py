@@ -55,7 +55,7 @@ class Node:
         return leaves
 
     def update_bounds_below(self):
-        # Root init
+        # Root init: full bounds
         if self.is_root:
             self.lower = {0: -np.inf}
             self.upper = {0: np.inf}
@@ -64,17 +64,16 @@ class Node:
             if child is None:
                 continue
 
-            # Start with empty dicts and only set the relevant bound
+            # Copy parent bounds
             child.lower = self.lower.copy()
             child.upper = self.upper.copy()
 
+            # Update bounds for the splitting feature
             if self.feature is not None:
                 if child == self.left_child:
-                    # left child: upper bound = threshold, lower unchanged
-                    child.upper[self.feature] = self.threshold
-                else:
-                    # right child: lower bound = threshold, upper unchanged
-                    child.lower[self.feature] = self.threshold
+                    child.upper[self.feature] = self.threshold  # left gets upper bound
+                else:  # right child
+                    child.lower[self.feature] = self.threshold  # right gets lower bound
 
         # Recurse
         for child in [self.left_child, self.right_child]:
