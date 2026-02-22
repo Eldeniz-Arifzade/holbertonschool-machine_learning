@@ -40,27 +40,27 @@ class Node:
     def left_child_add_prefix(self, text):
         """ Add prefix to left child """
         lines = text.rstrip("\n").split("\n")
-        new_text = "+--" + lines[0] + "\n"
+        new_text = "    +--" + lines[0] + "\n"
         for x in lines[1:]:
-            new_text += "| " + x + "\n"
+            new_text += "    |  " + x + "\n"
         return new_text
 
     def right_child_add_prefix(self, text):
         """ Add prefix to right child """
         lines = text.rstrip("\n").split("\n")
-        new_text = "+--" + lines[0] + "\n"
+        new_text = "    +--" + lines[0] + "\n"
         for x in lines[1:]:
-            new_text += "  " + x + "\n"
+            new_text += "       " + x + "\n"
         return new_text
 
     def __str__(self):
         """ Print node """
         if self.is_root:
             label = (f"root [feature={self.feature},"
-                     f" threshold={self.threshold}]")
+                    f" threshold={self.threshold}]")
         else:
             label = (f"-> node [feature={self.feature},"
-                     f" threshold={self.threshold}]")
+                    f" threshold={self.threshold}]")
         left_str = self.left_child_add_prefix(self.left_child.__str__())
         right_str = self.right_child_add_prefix(self.right_child.__str__())
         return label + "\n" + left_str + right_str.rstrip("\n")
