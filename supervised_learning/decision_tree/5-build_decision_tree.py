@@ -102,6 +102,13 @@ class Node:
             [is_large_enough(x), is_small_enough(x)]
             ), axis=0)
 
+    def pred(self, x):
+        """ Predict node """
+        if x[self.feature] > self.threshold:
+            return self.left_child.pred(x)
+        else:
+            return self.right_child.pred(x)
+
     def __str__(self):
         """ Print node for debugging """
         s = f"Node(feature={self.feature}, threshold={self.threshold})"
@@ -137,6 +144,9 @@ class Leaf(Node):
         """ Print the leaf of the tree """
         return f"-> leaf [value={self.value}]"
 
+    def pred(self, x):
+        """ Predict leaf """
+        return self.value
 
 class Decision_Tree():
     """ Class for implementing Decision Tree """
@@ -174,3 +184,12 @@ class Decision_Tree():
     def __str__(self):
         """ Print tree """
         return self.root.__str__()
+
+    def update_predict(self):
+        """ Faster predict """
+        self.update_bounds()
+        leaves = self.get_leaves()
+        for leaf in leaves :
+            leaf.update_indicator()          
+        self.predict = lambda A: np.sum(np.array([leaf.indicator(A) * leaf.value
+                                        for leaf in leaves]), axis=0)
