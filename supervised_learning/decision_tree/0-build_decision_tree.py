@@ -5,7 +5,7 @@ import numpy as np
 
 class Node:
     """ The node of the tree """
-    def __init__(self, feature=None, threshold=None, left_child=None, 
+    def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
         """ Initialize Node """
         self.feature = feature
@@ -38,6 +38,7 @@ class Leaf(Node):
         self.depth = depth
 
     def max_depth_below(self):
+        """ Depth of the tree """
         return self.depth
 
 
