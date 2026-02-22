@@ -55,6 +55,9 @@ class Node:
 
     def __str__(self):
         """Print node"""
+        # Leaf case
+        if self.is_leaf:
+            return f"leaf [value={self.value}]"
         if self.is_root:
             label = f"root [feature={self.feature}, threshold={self.threshold}]"
         else:
