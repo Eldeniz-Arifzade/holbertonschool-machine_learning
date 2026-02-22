@@ -215,7 +215,8 @@ class Decision_Tree:
     - Depth                     : {self.depth()}
     - Number of nodes           : {self.count_nodes()}
     - Number of leaves          : {self.count_nodes(only_leaves=True)}
-    - Accuracy on training data : {self.accuracy(self.explanatory, self.target)}"""
+    - Accuracy on training data : {self.accuracy(self.explanatory, 
+                                   self.target)}"""
             )
 
     def np_extrema(self, arr):
@@ -236,6 +237,7 @@ class Decision_Tree:
         return feature, threshold
 
     def fit_node(self, node):
+        """ fit node """
         node.feature, node.threshold = self.split_criterion(node)
 
         # individuals that go left (strictly greater than threshold)
@@ -287,6 +289,7 @@ class Decision_Tree:
         return n
 
     def accuracy(self, test_explanatory, test_target):
+        """ accuracy as a metric """
         return np.sum(
             np.equal(self.predict(test_explanatory), test_target)
         ) / test_target.size
