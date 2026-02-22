@@ -324,7 +324,8 @@ class Decision_Tree:
         left_sizes = left_counts.sum(axis=1)       # shape (t,)
 
         # right child counts
-        right_counts = (classes == unique_classes[:, np.newaxis]).T.sum(axis=0) - left_counts
+        total = (classes == unique_classes[:, np.newaxis]).T.sum(axis=0)
+        right_counts = total - left_counts
         right_sizes = n - left_sizes               # shape (t,)
 
         # Gini = 1 - sum of squared proportions
