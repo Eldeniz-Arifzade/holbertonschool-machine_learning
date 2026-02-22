@@ -29,7 +29,7 @@ class Isolation_Random_Forest:
 
         if verbose == 1:
             print("\nTraining finished.\n")
-            print(f"Mean depth                     : {np.mean(depths)}")
+            print(f"\nMean depth                     : {np.mean(depths)}")
             print(f"Mean number of nodes           : {np.mean(nodes)}")
             print(f"Mean number of leaves          : {np.mean(leaves)}\n")
 
