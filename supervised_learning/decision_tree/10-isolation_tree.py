@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-Node = __import__('8-build_decision_tree').Node
-Leaf = __import__('8-build_decision_tree').Leaf
 """ Isolation Forest Part I """
 import numpy as np
+Node = __import__('8-build_decision_tree').Node
+Leaf = __import__('8-build_decision_tree').Leaf
 
 
 class Isolation_Random_Tree:
@@ -36,7 +36,8 @@ class Isolation_Random_Tree:
         for leaf in leaves:
             leaf.update_indicator()
         self.predict = lambda A: np.sum(
-            np.array([leaf.indicator(A) * leaf.depth for leaf in leaves]), axis=0
+            np.array([leaf.indicator(A) * leaf.depth for leaf in leaves]),
+            axis=0
         )
 
     def np_extrema(self, arr):
@@ -81,8 +82,12 @@ class Isolation_Random_Tree:
         )
 
         # Leaf if only 1 individual or max depth reached
-        is_left_leaf = (np.sum(left_population) <= 1 or node.depth + 1 >= self.max_depth)
-        is_right_leaf = (np.sum(right_population) <= 1 or node.depth + 1 >= self.max_depth)
+        is_left_leaf = (
+            np.sum(left_population) <= 1 or node.depth + 1 >= self.max_depth
+        )
+        is_right_leaf = (
+            np.sum(right_population) <= 1 or node.depth + 1 >= self.max_depth
+        )
 
         if is_left_leaf:
             node.left_child = self.get_leaf_child(node, left_population)
