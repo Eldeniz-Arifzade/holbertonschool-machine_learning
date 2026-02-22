@@ -31,9 +31,11 @@ class Node:
         """ Count nodes """
         if self.is_leaf:
             return 1
+        right_count = self.right_child.count_nodes_below()
+        left_count = self.left_child.count_nodes_below(only_leaves)
         if only_leaves:
-            return self.left_child.count_nodes_below() + self.right_child.count_nodes_below()
-        return 1 + self.left_child.count_nodes_below() + self.right_child.count_nodes_below()
+            return right_count + left_count
+        return 1 + right_count + left_count
 
 
 class Leaf(Node):
