@@ -82,7 +82,7 @@ class Leaf(Node):
 
     def __str__(self):
         """ Print the leaf of the tree """
-    return (f"-> leaf [value={self.value}]")
+        return (f"-> leaf [value={self.value}]")
 
 
 class Decision_Tree():
