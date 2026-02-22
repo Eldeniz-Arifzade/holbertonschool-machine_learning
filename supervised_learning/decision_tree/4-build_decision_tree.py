@@ -55,26 +55,28 @@ class Node:
         return leaves
 
     def update_bounds_below(self):
+        # Initialize root bounds
         if self.is_root:
-            self.upper = {0: np.inf}
-            self.lower = {0: -1 * np.inf}
+            self.lower = {self.feature: -np.inf}
+            self.upper = {self.feature: np.inf}
 
+        # Update children
         for child in [self.left_child, self.right_child]:
             if child is None:
                 continue
 
-            # Start by copying parent bounds
+            # Copy parent's bounds
             child.lower = self.lower.copy()
             child.upper = self.upper.copy()
 
-            # Update the split feature bounds
+            # Update the bounds according to which child
             if self.feature is not None:
                 if child == self.left_child:
                     child.upper[self.feature] = self.threshold
-                elif child == self.right_child:
+                else:  # right child
                     child.lower[self.feature] = self.threshold
 
-        # Recursively update children
+        # Recurse down
         for child in [self.left_child, self.right_child]:
             if child is not None:
                 child.update_bounds_below()
