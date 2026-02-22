@@ -22,8 +22,10 @@ class Isolation_Random_Forest:
         leaves = []
 
         for i in range(n_trees):
-            tree = Isolation_Random_Tree(max_depth=self.max_depth,
-                                         seed=self.seed + i)
+            tree = Isolation_Random_Tree(
+                max_depth=self.max_depth,
+                seed=self.seed + i
+            )
             tree.fit(explanatory)
             self.trees.append(tree)
             depths.append(tree.depth())
@@ -31,10 +33,12 @@ class Isolation_Random_Forest:
             leaves.append(tree.count_nodes(only_leaves=True))
 
         if verbose == 1:
-            print(f"  Training finished.\n"
+            print(
+                f"  Training finished.\n"
                 f"    - Mean depth                     : {np.mean(depths)}\n"
                 f"    - Mean number of nodes           : {np.mean(nodes)}\n"
-                f"    - Mean number of leaves          : {np.mean(leaves)}")
+                f"    - Mean number of leaves          : {np.mean(leaves)}"
+            )
 
     def suspects(self, explanatory, n_suspects=5):
         """Return the n_suspects most likely outliers"""
