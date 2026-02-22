@@ -57,8 +57,8 @@ class Node:
     def update_bounds_below(self):
         # Initialize root bounds
         if self.is_root:
-            self.lower = {0: -np.inf}  # always start with feature 0
-            self.upper = {0: np.inf}
+            self.lower = {}  # always start with feature 0
+            self.upper = {}
 
         # Update children bounds
         for child in [self.left_child, self.right_child]:
