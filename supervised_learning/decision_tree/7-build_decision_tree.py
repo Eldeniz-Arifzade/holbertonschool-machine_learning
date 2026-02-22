@@ -293,38 +293,3 @@ class Decision_Tree:
         return np.sum(
             np.equal(self.predict(test_explanatory), test_target)
         ) / test_target.size
-
-    def possible_thresholds(self,node,feature) :
-            values = np.unique((self.explanatory[:,feature])[node.sub_population])
-            return (values[1:]+values[:-1])/2
-
-    def Gini_split_criterion_one_feature(self, node, feature):
-        y_node = self.target[node.sub_population]
-        X_node = self.explanatory[node.sub_population, feature][:, None]
-        classes = np.unique(y_node)
-        thresholds = self.possible_thresholds(node, feature)
-
-        # Boolean mask for left child (x > threshold) and class match
-        Left_F = (y_node[:, None, None] == classes[None, None, :]) & (X_node[:, :, None] > thresholds[None, :, None])
-
-        # Left Gini
-        left_counts = Left_F.sum(axis=0)  # (t, c)
-        left_totals = left_counts.sum(axis=1)
-        left_gini = 1 - np.sum((left_counts / left_totals[:, None])**2, axis=1)
-
-        # Right Gini
-        right_counts = (~Left_F).sum(axis=0)
-        right_totals = right_counts.sum(axis=1)
-        right_gini = 1 - np.sum((right_counts / right_totals[:, None])**2, axis=1)
-
-        # Weighted average Gini
-        weighted_gini = (left_totals * left_gini + right_totals * right_gini) / (left_totals + right_totals)
-
-        # Best threshold
-        idx_best = np.argmin(weighted_gini)
-        return thresholds[idx_best], weighted_gini[idx_best]
-
-    def Gini_split_criterion(self,node) :
-            X=np.array([self.Gini_split_criterion_one_feature(node,i) for i in range(self.explanatory.shape[1])])
-            i =np.argmin(X[:,1])
-            return i, X[i,0]

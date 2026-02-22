@@ -198,7 +198,7 @@ class Decision_Tree:
     def fit(self, explanatory, target, verbose=0):
         """ Fit method """
         if self.split_criterion == "random":
-            self.split_criterion = self.Gini_split_criterion
+            self.split_criterion = self.random_split_criterion
         else:
             self.split_criterion = self.Gini_split_criterion
 
@@ -294,37 +294,61 @@ class Decision_Tree:
             np.equal(self.predict(test_explanatory), test_target)
         ) / test_target.size
 
-    def possible_thresholds(self,node,feature) :
-            values = np.unique((self.explanatory[:,feature])[node.sub_population])
-            return (values[1:]+values[:-1])/2
+    def possible_thresholds(self, node, feature):
+        """ Compute possible thresholds """
+        values = np.unique((self.explanatory[:, feature])[node.sub_population])
+        return (values[1:] + values[:-1]) / 2
 
     def Gini_split_criterion_one_feature(self, node, feature):
-        y_node = self.target[node.sub_population]
-        X_node = self.explanatory[node.sub_population, feature][:, None]
-        classes = np.unique(y_node)
+        """ Gini split criterion for one feature """
         thresholds = self.possible_thresholds(node, feature)
 
-        # Boolean mask for left child (x > threshold) and class match
-        Left_F = (y_node[:, None, None] == classes[None, None, :]) & (X_node[:, :, None] > thresholds[None, :, None])
+        # individuals and classes in this node
+        individuals = self.explanatory[:, feature][node.sub_population]
+        classes = self.target[node.sub_population]
+        unique_classes = np.unique(classes)
 
-        # Left Gini
-        left_counts = Left_F.sum(axis=0)  # (t, c)
-        left_totals = left_counts.sum(axis=1)
-        left_gini = 1 - np.sum((left_counts / left_totals[:, None])**2, axis=1)
+        # shape (n, t, c): is individual i > threshold j AND of class k?
+        Left_F = (
+            (individuals[:, np.newaxis] > thresholds[np.newaxis, :])[:, :, np.newaxis]
+            & (classes[:, np.newaxis] == unique_classes[np.newaxis, :])[:, np.newaxis, :]
+        )
 
-        # Right Gini
-        right_counts = (~Left_F).sum(axis=0)
-        right_totals = right_counts.sum(axis=1)
-        right_gini = 1 - np.sum((right_counts / right_totals[:, None])**2, axis=1)
+        # total individuals in node
+        n = individuals.shape[0]
 
-        # Weighted average Gini
-        weighted_gini = (left_totals * left_gini + right_totals * right_gini) / (left_totals + right_totals)
+        # left child counts per threshold: sum over individuals (axis 0)
+        left_counts = Left_F.sum(axis=0)           # shape (t, c)
+        left_sizes = left_counts.sum(axis=1)       # shape (t,)
 
-        # Best threshold
-        idx_best = np.argmin(weighted_gini)
-        return thresholds[idx_best], weighted_gini[idx_best]
+        # right child counts
+        right_counts = (classes == unique_classes[:, np.newaxis]).T.sum(axis=0) - left_counts
+        right_sizes = n - left_sizes               # shape (t,)
 
-    def Gini_split_criterion(self,node) :
-            X=np.array([self.Gini_split_criterion_one_feature(node,i) for i in range(self.explanatory.shape[1])])
-            i =np.argmin(X[:,1])
-            return i, X[i,0]
+        # Gini = 1 - sum of squared proportions
+        # avoid division by zero
+        left_sizes_safe = np.where(left_sizes == 0, 1, left_sizes)
+        right_sizes_safe = np.where(right_sizes == 0, 1, right_sizes)
+
+        left_gini = 1 - np.sum(
+            (left_counts / left_sizes_safe[:, np.newaxis]) ** 2, axis=1
+        )
+        right_gini = 1 - np.sum(
+            (right_counts / right_sizes_safe[:, np.newaxis]) ** 2, axis=1
+        )
+
+        # weighted average Gini
+        gini_split = (left_sizes * left_gini + right_sizes * right_gini) / n
+
+        # return best threshold and its gini score
+        best = np.argmin(gini_split)
+        return thresholds[best], gini_split[best]
+
+    def Gini_split_criterion(self, node):
+        """ Gini split criterion """
+        X = np.array([
+            self.Gini_split_criterion_one_feature(node, i)
+            for i in range(self.explanatory.shape[1])
+        ])
+        i = np.argmin(X[:, 1])
+        return i, X[i, 0]
