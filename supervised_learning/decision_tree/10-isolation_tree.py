@@ -85,18 +85,12 @@ class Isolation_Random_Tree() :
 
         # different from Decision_Tree: no class check, only size and depth
         is_left_leaf = (
-            np.sum(left_population) < self.min_pop
+            np.sum(left_population) <= 1  # changed < to <= 1
             or node.depth + 1 >= self.max_depth
         )
 
-        if is_left_leaf:
-            node.left_child = self.get_leaf_child(node, left_population)
-        else:
-            node.left_child = self.get_node_child(node, left_population)
-            self.fit_node(node.left_child)
-
         is_right_leaf = (
-            np.sum(right_population) < self.min_pop
+            np.sum(right_population) <= 1  # changed < to <= 1
             or node.depth + 1 >= self.max_depth
         )
 
