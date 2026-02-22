@@ -148,6 +148,7 @@ class Leaf(Node):
         """ Predict leaf """
         return self.value
 
+
 class Decision_Tree():
     """ Class for implementing Decision Tree """
     def __init__(self, max_depth=10, min_pop=1, seed=0,
@@ -189,11 +190,13 @@ class Decision_Tree():
         """ Faster predict """
         self.update_bounds()
         leaves = self.get_leaves()
-        for leaf in leaves :
-            leaf.update_indicator()          
-        self.predict = lambda A: np.sum(np.array([leaf.indicator(A) * leaf.value
-                                        for leaf in leaves]), axis=0)
+        for leaf in leaves:
+            leaf.update_indicator()        
+        self.predict = lambda A: np.sum(np.array([
+            leaf.indicator(A) * leaf.value
+            for leaf in leaves
+            ]), axis=0)
 
-    def pred(self,x):
+    def pred(self, x):
         """ Pred """
         return self.root.pred(x)
