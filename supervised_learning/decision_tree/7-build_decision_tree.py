@@ -224,20 +224,20 @@ class Decision_Tree():
 
     def split_criterion(self):
         """ split criterion """
-        def np_extrema(self,arr):
+    def np_extrema(self,arr):
             """ Return min and max values """
             return np.min(arr), np.max(arr)
 
-        def random_split_criterion(self,node):
-            """ Randomly split nodes """
-            diff=0
-            while diff==0 :
-                feature=self.rng.integers(0,self.explanatory.shape[1])
-                feature_min,feature_max=self.np_extrema(self.explanatory[:,feature][node.sub_population])
-                diff=feature_max-feature_min
-            x=self.rng.uniform()
-            threshold= (1-x)*feature_min + x*feature_max
-            return feature,threshold
+    def random_split_criterion(self,node):
+        """ Randomly split nodes """
+        diff=0
+        while diff==0 :
+            feature=self.rng.integers(0,self.explanatory.shape[1])
+            feature_min,feature_max=self.np_extrema(self.explanatory[:,feature][node.sub_population])
+            diff=feature_max-feature_min
+        x=self.rng.uniform()
+        threshold= (1-x)*feature_min + x*feature_max
+        return feature,threshold
 
     def fit_node(self, node):
         node.feature, node.threshold = self.split_criterion(node)
