@@ -18,13 +18,10 @@ class Isolation_Random_Forest:
             tree.fit(explanatory)
             self.trees.append(tree)
         if verbose == 1:
-            depths = [tree.depth() for tree in self.trees]
-            nodes = [tree.count_nodes() for tree in self.trees]
-            leaves = [tree.count_nodes(only_leaves=True) for tree in self.trees]
-            print(f"""  Training finished.
-Mean depth                     : {np.mean(depths)}
-Mean number of nodes           : {np.mean(nodes)}
-Mean number of leaves          : {np.mean(leaves)}""")
+            print(f"\nTraining finished.\n")
+            print(f"Mean depth                     : {np.mean(depths)}")
+            print(f"Mean number of nodes           : {np.mean(nodes)}")
+            print(f"Mean number of leaves          : {np.mean(leaves)}\n")
 
     def suspects(self, explanatory, n_suspects=5):
         # Get depth of each individual in each tree
