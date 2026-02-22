@@ -71,9 +71,9 @@ class Node:
             # Update bounds for the splitting feature
             if self.feature is not None:
                 if child == self.left_child:
-                    child.upper[self.feature] = self.threshold  # left gets upper bound
-                else:  # right child
-                    child.lower[self.feature] = self.threshold  # right gets lower bound
+                    child.lower[self.feature] = self.threshold  # left → lower bound
+                else:
+                    child.upper[self.feature] = self.threshold  # right → upper bound
 
         # Recurse
         for child in [self.left_child, self.right_child]:
