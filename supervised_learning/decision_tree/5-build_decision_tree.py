@@ -81,8 +81,9 @@ class Node:
                 child.update_bounds_below()
 
     def update_indicator(self):
-
+        """ update indicator """
         def is_large_enough(x):
+            """ check if feature satisfies lower bound """
             return np.all(
                 np.array([np.greater(x[:, key], self.lower[key])
                 for key in self.lower.keys()]),
@@ -90,13 +91,16 @@ class Node:
             )
 
         def is_small_enough(x):
+            """ check if feature satisfies upper bound """
             return np.all(
                 np.array([np.less_equal(x[:, key], self.upper[key])
                 for key in self.upper.keys()]),
                 axis=0
             )
 
-        self.indicator = lambda x: np.all(np.array([is_large_enough(x), is_small_enough(x)]), axis=0)
+        self.indicator = lambda x: np.all(np.array(
+            [is_large_enough(x), is_small_enough(x)]
+            ), axis=0)
 
     def __str__(self):
         """ Print node for debugging """
