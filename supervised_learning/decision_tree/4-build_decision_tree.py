@@ -57,8 +57,8 @@ class Node:
     def update_bounds_below(self):
         # Initialize root bounds
         if self.is_root:
-            self.lower = {}  # always start with feature 0
-            self.upper = {}
+            self.lower = {0: -np.inf}
+            self.upper = {0: np.inf}
 
         # Update children bounds
         for child in [self.left_child, self.right_child]:
@@ -69,7 +69,7 @@ class Node:
             child.lower = self.lower.copy()
             child.upper = self.upper.copy()
 
-            # Update according to which child
+            # Adjust according to split
             if self.feature is not None:
                 if child == self.left_child:
                     child.upper[self.feature] = self.threshold
