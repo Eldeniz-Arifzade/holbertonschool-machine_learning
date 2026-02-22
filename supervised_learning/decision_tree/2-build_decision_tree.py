@@ -38,19 +38,20 @@ class Node:
         return 1 + right_count + left_count
 
     def left_child_add_prefix(self, text):
-        """Add prefix to left child"""
-        lines = text.rstrip("\n").split("\n")
-        new_text = "+--" + lines[0] + "\n"
+        lines = text.split("\n")
+        new_text = "+---> " + lines[0] + "\n"
         for x in lines[1:]:
-            new_text += ("| " + x) + "\n"
+            if x != "":
+                new_text += "| " + x + "\n"
         return new_text
 
+
     def right_child_add_prefix(self, text):
-        """Add prefix to right child"""
-        lines = text.rstrip("\n").split("\n")
-        new_text = "+--" + lines[0] + "\n"
+        lines = text.split("\n")
+        new_text = "+---> " + lines[0] + "\n"
         for x in lines[1:]:
-            new_text += ("  " + x) + "\n"
+            if x != "":
+                new_text += "  " + x + "\n"
         return new_text
 
     def __str__(self):
@@ -64,7 +65,7 @@ class Node:
             label = f"-> node [feature={self.feature}, threshold={self.threshold}]"
         left_str = self.left_child_add_prefix(self.left_child.__str__())
         right_str = self.right_child_add_prefix(self.right_child.__str__())
-        return label + "\n" + left_str + right_str + "\n"
+        return label + "\n" + left_str + right_str
 
 class Leaf(Node):
     """ The leaf of the tree """
