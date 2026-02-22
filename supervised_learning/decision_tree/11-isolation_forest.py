@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Isolation Forest """
+"""Isolation Forest"""
 import numpy as np
 Isolation_Random_Tree = __import__('10-isolation_tree').Isolation_Random_Tree
 
@@ -34,6 +34,7 @@ class Isolation_Random_Forest:
             print(f"Mean number of leaves          : {np.mean(leaves)}\n")
 
     def suspects(self, explanatory, n_suspects=5):
+        """Return the n_suspects most likely outliers"""
         # Get depth of each individual in each tree
         all_depths = np.zeros((len(explanatory), len(self.trees)))
         for i, tree in enumerate(self.trees):
