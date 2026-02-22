@@ -58,8 +58,8 @@ class Node:
         """ Update lower and upper bounds for each feature recursively """
         # Initialize at root
         if self.is_root:
-            self.lower = {}
-            self.upper = {}
+            self.lower = {self.feature: -np.inf} if self.feature is not None else {}
+            self.upper = {self.feature: np.inf} if self.feature is not None else {}
 
         for child in [self.left_child, self.right_child]:
             if child is None:
@@ -70,10 +70,10 @@ class Node:
             child.upper = self.upper.copy()
 
             # Update bounds based on split feature
-            if child == self.left_child:
+            if child == self.left_child and self.feature is not None:
                 # Left child: values <= threshold
                 child.upper[self.feature] = self.threshold
-            elif child == self.right_child:
+            elif child == self.right_child and self.feature is not None:
                 # Right child: values > threshold
                 child.lower[self.feature] = self.threshold
 
