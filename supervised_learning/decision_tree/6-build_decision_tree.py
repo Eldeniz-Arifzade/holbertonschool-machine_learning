@@ -191,7 +191,7 @@ class Decision_Tree():
         self.update_bounds()
         leaves = self.get_leaves()
         for leaf in leaves:
-            leaf.update_indicator()        
+            leaf.update_indicator()
         self.predict = lambda A: np.sum(np.array([
             leaf.indicator(A) * leaf.value
             for leaf in leaves
