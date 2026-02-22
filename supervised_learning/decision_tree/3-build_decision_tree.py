@@ -38,9 +38,19 @@ class Node:
         return 1 + right_count + left_count
 
     def get_leaves_below(self):
-        """ Return list of all leaves of the tree """
-        return (self.left_child.get_leaves_below() +
-                self.right_child.get_leaves_below())
+        """ Return list of all leaves below this node """
+        if self.is_leaf:
+            return [self]
+
+        leaves = []
+
+        if self.left_child:
+            leaves += self.left_child.get_leaves_below()
+
+        if self.right_child:
+            leaves += self.right_child.get_leaves_below()
+
+        return leaves
 
 class Leaf(Node):
     """ The leaf of the tree """
