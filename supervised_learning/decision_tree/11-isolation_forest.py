@@ -28,10 +28,10 @@ class Isolation_Random_Forest:
             leaves.append(tree.count_nodes(only_leaves=True))
 
         if verbose == 1:
-            print(f"""  Training finished.
-        - Mean depth                     : { np.mean(depths)  }
-        - Mean number of nodes           : { np.mean(nodes)   }
-        - Mean number of leaves          : { np.mean(leaves)  }""")
+            print("\nTraining finished.\n")
+            print(f"Mean depth : {np.mean(depths)}")
+            print(f"Mean number of nodes : {np.mean(nodes)}")
+            print(f"Mean number of leaves : {np.mean(leaves)}\n")
 
     def suspects(self, explanatory, n_suspects=5):
         """Return the n_suspects most likely outliers"""
