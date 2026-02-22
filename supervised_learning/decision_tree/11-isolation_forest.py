@@ -15,7 +15,7 @@ class Isolation_Random_Forest:
         self.trees = []
         for i in range(self.n_trees):
             tree = Isolation_Random_Tree(max_depth=self.max_depth, seed=self.seed + i)
-            tree.fit(explanatory, verbose=0)  # <-- use the tree's fit, it has random_split_criterion
+            tree.fit(explanatory)
             self.trees.append(tree)
         if verbose == 1:
             depths = [tree.depth() for tree in self.trees]
@@ -26,15 +26,12 @@ Mean depth                     : {np.mean(depths)}
 Mean number of nodes           : {np.mean(nodes)}
 Mean number of leaves          : {np.mean(leaves)}""")
 
-    def suspects(self, explanatory, n_suspects):
-        """Return indices of the top n_suspects likely outliers"""
-        n_individuals = explanatory.shape[0]
-        # Compute depths for each individual in each tree
-        depths = np.zeros((self.n_trees, n_individuals))
-        for t_idx, tree in enumerate(self.trees):
-            depths[t_idx, :] = tree.predict(explanatory)
-        # Average depth across all trees
-        avg_depth = depths.mean(axis=0)
-        # Smallest average depth -> most likely outlier
-        suspect_indices = np.argsort(avg_depth)[:n_suspects]
-        return suspect_indices
+    def suspects(self, explanatory, n_suspects=5):
+        # Get depth of each individual in each tree
+        all_depths = np.zeros((len(explanatory), len(self.trees)))
+        for i, tree in enumerate(self.trees):
+            all_depths[:, i] = tree.predict(explanatory)
+
+        mean_depths = all_depths.mean(axis=1)
+        idx = np.argsort(mean_depths)[:n_suspects]  # smallest depth = most suspicious
+        return explanatory[idx], mean_depths[idx]
