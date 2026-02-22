@@ -215,7 +215,7 @@ class Decision_Tree:
     - Depth                     : {self.depth()}
     - Number of nodes           : {self.count_nodes()}
     - Number of leaves          : {self.count_nodes(only_leaves=True)}
-    - Accuracy on training data : {self.accuracy(self.explanatory, 
+    - Accuracy on training data : {self.accuracy(self.explanatory,
                                    self.target)}"""
             )
 
