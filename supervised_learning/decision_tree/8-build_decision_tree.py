@@ -314,7 +314,7 @@ class Decision_Tree:
              )[:, :, np.newaxis]
             & (classes[:, np.newaxis] == unique_classes[np.newaxis, :]
                )[:, np.newaxis, :]
-        )
+            )
 
         # total individuals in node
         n = individuals.shape[0]
