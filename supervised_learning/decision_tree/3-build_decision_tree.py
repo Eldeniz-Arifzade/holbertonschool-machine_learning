@@ -52,6 +52,7 @@ class Node:
 
         return leaves
 
+
 class Leaf(Node):
     """ The leaf of the tree """
     def __init__(self, value, depth=None):
@@ -76,6 +77,7 @@ class Leaf(Node):
     def __str__(self):
         """ Print the leaf of the tree """
         return f"-> leaf [value={self.value}]"
+
 
 class Decision_Tree():
     """ Class for implementing Decision Tree """
