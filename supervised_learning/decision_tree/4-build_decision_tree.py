@@ -57,26 +57,26 @@ class Node:
     def update_bounds_below(self):
         # Initialize root bounds
         if self.is_root:
-            self.lower = {self.feature: -np.inf}
-            self.upper = {self.feature: np.inf}
+            self.lower = {0: -np.inf}  # always start with feature 0
+            self.upper = {0: np.inf}
 
-        # Update children
+        # Update children bounds
         for child in [self.left_child, self.right_child]:
             if child is None:
                 continue
 
-            # Copy parent's bounds
+            # Copy parent bounds first
             child.lower = self.lower.copy()
             child.upper = self.upper.copy()
 
-            # Update the bounds according to which child
+            # Update according to which child
             if self.feature is not None:
                 if child == self.left_child:
                     child.upper[self.feature] = self.threshold
                 else:  # right child
                     child.lower[self.feature] = self.threshold
 
-        # Recurse down
+        # Recurse
         for child in [self.left_child, self.right_child]:
             if child is not None:
                 child.update_bounds_below()
