@@ -18,7 +18,8 @@ class Random_Forest():
 
     def predict(self, explanatory):
         """ Predict using majority vote across all trees """
-        predictions = np.array([pred(explanatory) for pred in self.numpy_preds])
+        predictions = np.array([pred(explanatory)
+                               for pred in self.numpy_preds])
         # predictions shape: (n_trees, n_individuals)
         # for each individual, pick the most frequent class
         return np.apply_along_axis(
