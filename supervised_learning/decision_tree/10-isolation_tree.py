@@ -6,7 +6,9 @@ Leaf = __import__('8-build_decision_tree').Leaf
 
 
 class Isolation_Random_Tree:
+    """ isolation forest """
     def __init__(self, max_depth=10, seed=0, root=None):
+        """ initalize class """
         self.rng = np.random.default_rng(seed)
         self.root = root if root else Node(is_root=True)
         self.explanatory = None
@@ -15,18 +17,23 @@ class Isolation_Random_Tree:
         self.min_pop = 1
 
     def __str__(self):
+        """ print tree """
         return str(self.root)
 
     def depth(self):
+        """ calculate depth """
         return self.root.max_depth_below()
 
     def count_nodes(self, only_leaves=False):
+        """ count nodes """
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def update_bounds(self):
+        """ update bounds """
         self.root.update_bounds_below()
 
     def get_leaves(self):
+        """ get leaves """
         return self.root.get_leaves_below()
 
     def update_predict(self):
@@ -45,6 +52,7 @@ class Isolation_Random_Tree:
         return np.min(arr), np.max(arr)
 
     def random_split_criterion(self, node):
+        """ random spliting criteria """
         diff = 0
         while diff == 0:
             feature = self.rng.integers(0, self.explanatory.shape[1])
@@ -64,12 +72,14 @@ class Isolation_Random_Tree:
         return leaf_child
 
     def get_node_child(self, node, sub_population):
+        """ get node child """
         n = Node()
         n.depth = node.depth + 1
         n.sub_population = sub_population
         return n
 
     def fit_node(self, node):
+        """ fit method """
         node.feature, node.threshold = self.random_split_criterion(node)
 
         left_population = (
@@ -102,6 +112,7 @@ class Isolation_Random_Tree:
             self.fit_node(node.right_child)
 
     def fit(self, explanatory, verbose=0):
+        """ fit """
         self.split_criterion = self.random_split_criterion
         self.explanatory = explanatory
         self.root.sub_population = np.ones(explanatory.shape[0], dtype='bool')
