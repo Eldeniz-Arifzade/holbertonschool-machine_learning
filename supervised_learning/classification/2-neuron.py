@@ -33,5 +33,5 @@ class Neuron():
     def forward_prop(self, X):
         """ Function for conducting forward propagation """
         z = self.__W @ X + self.__b
-        self.__A = 1 / (1 + e**(-z))
+        self.__A = 1 / (1 + np.e**(-z))
         return self.__A
