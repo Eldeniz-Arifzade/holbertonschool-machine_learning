@@ -65,8 +65,8 @@ class DeepNeuralNetwork:
             Z = np.dot(W, A_prev) + b
             if layer == self.__L:
                 t = np.exp(Z - np.max(Z, axis=0, keepdims=True))
-                self.__cache["A" + str(layer)] = t / np.sum(t, 
-                                                            axis=0, 
+                self.__cache["A" + str(layer)] = t / np.sum(t,
+                                                            axis=0,
                                                             keepdims=True)
             else:
                 if self.__activation == 'sig':
