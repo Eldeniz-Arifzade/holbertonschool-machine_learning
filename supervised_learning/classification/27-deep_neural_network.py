@@ -1,97 +1,82 @@
 #!/usr/bin/env python3
-""" This module will define a class named DeepNeuralNetwork """
+"""Module that defines a deep neural network for multiclass classification."""
+
 import numpy as np
 import pickle
 import os
 
 
 class DeepNeuralNetwork:
-    """Defines a deep neural network performing binary classification"""
+    """Defines a deep neural network performing multiclass classification."""
+
     def __init__(self, nx, layers):
-        """ Initialize class """
-        # validate nx
+        """Class constructor."""
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
-
         if nx < 1:
             raise ValueError("nx must be a positive integer")
-
-        # validate layers
-        if not isinstance(layers, list):
+        if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
 
-        # private attributes
         self.__L = len(layers)
         self.__cache = {}
         self.__weights = {}
 
         prev = nx
-
-        for i, nodes in enumerate(layers):
-
-            # validate nodes
-            if not isinstance(nodes, int) or nodes <= 0:
+        for layer in range(1, self.__L + 1):
+            if not isinstance(layers[layer - 1], int) or layers[layer - 1] < 1:
                 raise TypeError("layers must be a list of positive integers")
-
-            # He initialization
-            self.__weights["W{}".format(i + 1)] = (
-                np.random.randn(nodes, prev) * np.sqrt(2 / prev)
+            self.__weights["W" + str(layer)] = (
+                np.random.randn(layers[layer - 1], prev) * np.sqrt(2 / prev)
             )
+            self.__weights["b" + str(layer)] = np.zeros((layers[layer - 1], 1))
+            prev = layers[layer - 1]
 
-            # bias initialization
-            self.__weights["b{}".format(i + 1)] = np.zeros((nodes, 1))
-
-            prev = nodes
-
-    # getters
     @property
     def L(self):
-        """ getter for L """
+        """Getter for L."""
         return self.__L
 
     @property
     def cache(self):
-        """ getter for cache """
+        """Getter for cache."""
         return self.__cache
 
     @property
     def weights(self):
-        """ get for weihts """
+        """Getter for weights."""
         return self.__weights
 
     def forward_prop(self, X):
-        """Forward propagation for multiclass classification"""
+        """Calculates the forward propagation of the neural network."""
         self.__cache["A0"] = X
 
         for layer in range(1, self.__L + 1):
-            W = self.__weights["W{}".format(layer)]
-            b = self.__weights["b{}".format(layer)]
-            A_prev = self.__cache["A{}".format(layer-1)]
-
-            Z = np.matmul(W, A_prev) + b
-
-            # Softmax for output layer, sigmoid for hidden layers
+            W = self.__weights["W" + str(layer)]
+            b = self.__weights["b" + str(layer)]
+            A_prev = self.__cache["A" + str(layer - 1)]
+            Z = np.dot(W, A_prev) + b
             if layer == self.__L:
-                exp_Z = np.exp(Z - np.max(Z, axis=0, keepdims=True))
-                A = exp_Z / np.sum(exp_Z, axis=0, keepdims=True)
+                t = np.exp(Z - np.max(Z, axis=0, keepdims=True))
+                self.__cache["A" + str(layer)] = (
+                    t / np.sum(t, axis=0, keepdims=True)
+                )
             else:
-                A = 1 / (1 + np.exp(-Z))  # sigmoid
+                self.__cache["A" + str(layer)] = 1 / (1 + np.exp(-Z))
 
-            self.__cache["A{}".format(layer)] = A
-
-        return self.__cache["A{}".format(self.__L)], self.__cache
+        return self.__cache["A" + str(self.__L)], self.__cache
 
     def cost(self, Y, A):
-        """Computes cost for multiclass classification"""
+        """Calculates the cost using cross-entropy loss."""
         m = Y.shape[1]
-        cost = -np.sum(Y * np.log(A + 1e-8)) / m  # add small epsilon for stability
+        cost = -1 / m * np.sum(Y * np.log(A + 1.0000001e-8))
         return cost
 
     def evaluate(self, X, Y):
-        """Evaluates the network's predictions for multiclass"""
-        AL, _ = self.forward_prop(X)
-        prediction = np.argmax(AL, axis=0)  # class with highest probability
-        cost = self.cost(Y, AL)
+        """Evaluates the neural network predictions."""
+        A, _ = self.forward_prop(X)
+        cost = self.cost(Y, A)
+        prediction = np.where(A == np.max(A, axis=0, keepdims=True), 1, 0)
         return prediction, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
@@ -108,11 +93,9 @@ class DeepNeuralNetwork:
             self.__weights["W" + str(layer)] -= alpha * dW
             self.__weights["b" + str(layer)] -= alpha * db
 
-    def train(self, X, Y, iterations=5000, alpha=0.05,
-              verbose=True, graph=True, step=100):
-        """Trains the deep NN with optional verbose printing and graphing."""
-
-        # Validate inputs
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True,
+              graph=True, step=100):
+        """Trains the deep neural network."""
         if not isinstance(iterations, int):
             raise TypeError("iterations must be an integer")
         if iterations <= 0:
@@ -121,46 +104,38 @@ class DeepNeuralNetwork:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
-        if (verbose or graph):
+        if verbose or graph:
             if not isinstance(step, int):
                 raise TypeError("step must be an integer")
             if step <= 0 or step > iterations:
                 raise ValueError("step must be positive and <= iterations")
 
         costs = []
-        iterations_list = []
+        steps = []
 
-        # Training loop
-        for i in range(iterations + 1):  # include 0th iteration
-            AL, cache = self.forward_prop(X)
-            cost = self.cost(Y, AL)
-
-            if (i % step == 0) or (i == 0) or (i == iterations):
-                costs.append(cost)
-                iterations_list.append(i)
-                if verbose:
-                    print(f"Cost after {i} iterations: {cost}")
-
+        for i in range(iterations + 1):
+            A, cache = self.forward_prop(X)
             if i < iterations:
                 self.gradient_descent(Y, cache, alpha)
+            cost = self.cost(Y, A)
+            if verbose and i % step == 0:
+                print("Cost after {} iterations: {}".format(i, cost))
+            if graph and i % step == 0:
+                costs.append(cost)
+                steps.append(i)
 
-        # Plot cost curve if requested
         if graph:
             import matplotlib.pyplot as plt
-            plt.plot(iterations_list, costs, 'b-')
-            plt.xlabel('iteration')
-            plt.ylabel('cost')
-            plt.title('Training Cost')
+            plt.plot(steps, costs, "b-")
+            plt.xlabel("iteration")
+            plt.ylabel("cost")
+            plt.title("Training Cost")
             plt.show()
 
-        # Return final evaluation
         return self.evaluate(X, Y)
 
     def save(self, filename):
-        """
-        Saves the instance object to a file in pickle format.
-        If filename does not end with '.pkl', it is added.
-        """
+        """Saves the instance object to a file in pickle format."""
         if not filename.endswith(".pkl"):
             filename += ".pkl"
         with open(filename, "wb") as f:
@@ -168,12 +143,8 @@ class DeepNeuralNetwork:
 
     @staticmethod
     def load(filename):
-        """
-        Loads a pickled DeepNeuralNetwork object from a file.
-        Returns the object, or None if file does not exist.
-        """
+        """Loads a pickled DeepNeuralNetwork object from a file."""
         if not os.path.exists(filename):
             return None
         with open(filename, "rb") as f:
-            obj = pickle.load(f)
-        return obj
+            return pickle.load(f)
