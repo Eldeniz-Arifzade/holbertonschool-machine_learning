@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """ This module will define a class named DeepNeuralNetwork """
 import numpy as np
-import pickle, os
+import pickle
+import os
 
 
 class DeepNeuralNetwork:
@@ -110,10 +111,9 @@ class DeepNeuralNetwork:
             self.__weights["W" + str(layer)] -= alpha * dW
             self.__weights["b" + str(layer)] -= alpha * db
 
-    def train(
-        self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100
-        ):
-        """Trains the deep NN with optional verbose printing and graphing"""
+    def train(self, X, Y, iterations=5000, alpha=0.05, 
+              verbose=True, graph=True, step=100):
+        """Trains the deep NN with optional verbose printing and graphing."""
 
         # Validate inputs
         if not isinstance(iterations, int):
