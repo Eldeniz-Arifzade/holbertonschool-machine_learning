@@ -111,7 +111,7 @@ class DeepNeuralNetwork:
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
         """Trains the deep neural network"""
-        
+
         # Input validation
         if not isinstance(iterations, int):
             raise TypeError("iterations must be an integer")
@@ -121,11 +121,11 @@ class DeepNeuralNetwork:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
-        
+
         # Training loop
         for i in range(iterations):
             AL, cache = self.forward_prop(X)
             self.gradient_descent(Y, cache, alpha)
-        
+
         # Evaluate after training
         return self.evaluate(X, Y)
