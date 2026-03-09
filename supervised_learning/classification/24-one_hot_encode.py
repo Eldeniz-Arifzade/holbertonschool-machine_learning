@@ -5,7 +5,7 @@ import numpy as np
 
 def one_hot_encode(Y, classes):
     """Converts numeric labels to one-hot encoding (shape: classes x m)."""
-    
+
     # check type first
     if not isinstance(Y, np.ndarray):
         return None  # return None immediately if Y is not a numpy.ndarray
