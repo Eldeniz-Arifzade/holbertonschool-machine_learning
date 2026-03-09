@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
+""" This module will define a class named DeepNeuralNetwork """
 import numpy as np
 
-class DeepNeuralNetwork:
+
+class DeepNeuralNetwork():
     """ Class for implementing L layered NN """
     def __init__(self, nx, layers):
         """ Initialize class """
