@@ -92,5 +92,5 @@ class DeepNeuralNetwork:
         AL, _ = self.forward_prop(X)
         prediction = np.where(AL >= 0.5, 1, 0)
         cost = self.cost(Y, AL)
-  
+
         return prediction, cost
