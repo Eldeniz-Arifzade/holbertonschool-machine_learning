@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Module to create a gradient descent with momentum optimizer in TensorFlow."""
-import tensorflow.keras as K
+import tensorflow.keras as tf
 
 
 def create_momentum_op(alpha, beta1):
@@ -14,5 +14,5 @@ def create_momentum_op(alpha, beta1):
     Returns:
     - optimizer: a TensorFlow optimizer instance
     """
-    optimizer = K.optimizers.SGD(learning_rate=alpha, momentum=beta1)
+    optimizer = tf.optimizers.SGD(learning_rate=alpha, momentum=beta1)
     return optimizer
