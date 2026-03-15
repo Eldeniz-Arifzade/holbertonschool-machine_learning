@@ -42,7 +42,7 @@ def train_model(network, data, labels, batch_size, epochs,
             monitor='val_loss',
             save_best_only=True,      # Only save if val_loss improves
             mode='min',               # Lower val_loss is better
-            verbose=1
+            verbose=0
         )
         callbacks.append(checkpoint)
 
