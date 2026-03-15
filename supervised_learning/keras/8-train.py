@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train a keras model with early stopping, learning rate decay, and model checkpoint"""
+""" early stopping, learning rate decay, and model checkpoint"""
 import tensorflow.keras as K
 
 
