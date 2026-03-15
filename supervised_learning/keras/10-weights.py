@@ -10,7 +10,7 @@ def save_weights(network, filename, save_format='keras'):
     Parameters:
     - network: Keras model whose weights should be saved
     - filename: path to save the weights
-    - save_format: format to save ('keras' for .h5, 'tf' for TensorFlow SavedModel)
+    - save_format: format to save ('keras' for .h5,'tf' for SavedModel)
     """
     network.save_weights(filename, save_format=save_format)
 
