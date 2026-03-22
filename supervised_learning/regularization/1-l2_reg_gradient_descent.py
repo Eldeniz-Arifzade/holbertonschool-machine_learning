@@ -24,9 +24,9 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
     """
     m = Y.shape[1]
 
-    # Backward propagation
-    # Start with output layer (softmax)
+    # Make a copy of weights to use original values during backprop
     dZ = cache['A' + str(L)] - Y
+
     for layer in range(L, 0, -1):
         # Get activation from previous layer
         A_prev = cache['A' + str(layer - 1)]
@@ -38,12 +38,13 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
         # Add L2 regularization term to weight gradient
         dW += (lambtha / m) * weights['W' + str(layer)]
 
+        # Calculate dZ for previous layer before updating weights
+        if layer > 1:
+            # Use current (not yet updated) weights
+            W_current = weights['W' + str(layer)]
+            # Derivative of tanh: 1 - tanh^2(z) = 1 - A^2
+            dZ = np.matmul(W_current.T, dZ) * (1 - np.square(cache['A' + str(layer - 1)]))
+
         # Update weights and biases in place
         weights['W' + str(layer)] -= alpha * dW
         weights['b' + str(layer)] -= alpha * db
-
-        # Calculate dZ for previous layer (if not at input layer)
-        if layer > 1:
-            # Derivative of tanh: 1 - tanh^2(z) = 1 - A^2
-            dZ = np.matmul(weights['W' + str(layer)].T, dZ) * \
-                 (1 - np.square(cache['A' + str(layer - 1)]))
