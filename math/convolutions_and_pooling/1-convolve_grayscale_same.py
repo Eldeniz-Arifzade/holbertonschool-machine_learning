@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def convolve_grayscale_valid(images, kernel):
+def convolve_grayscale_same(images, kernel):
     """ Function that performs a valid conv on grayscale image """
     m, h, w = np.shape(images)
     kh, kw = np.shape(kernel)
