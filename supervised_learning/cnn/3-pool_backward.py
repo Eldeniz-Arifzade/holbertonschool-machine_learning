@@ -40,15 +40,13 @@ def pool_backward(dA, A_prev, kernel_shape, stride=(1, 1), mode='max'):
                     h_end = h_start + kw
 
                     if mode == 'max':
-                        # In max pooling, only the maximum value gets the gradient
-                        a_prev_slice = A_prev[i, v_start:v_end, h_start:h_end, f]
-                        mask = (a_prev_slice == np.max(a_prev_slice))
+                        a_prev_s = A_prev[i, v_start:v_end, h_start:h_end, f]
+                        mask = (a_prev_s == np.max(a_prev_s))
                         dA_prev[i, v_start:v_end, h_start:h_end, f] += (
                             mask * dA[i, h, w, f]
                         )
 
                     elif mode == 'avg':
-                        # In average pooling, the gradient is split equally
                         average_gradient = dA[i, h, w, f] / (kh * kw)
                         dA_prev[i, v_start:v_end, h_start:h_end, f] += (
                             np.ones((kh, kw)) * average_gradient
