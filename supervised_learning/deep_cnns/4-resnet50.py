@@ -66,3 +66,4 @@ def resnet50():
 
     model = K.models.Model(inputs=X_input, outputs=X)
     return model
+    
