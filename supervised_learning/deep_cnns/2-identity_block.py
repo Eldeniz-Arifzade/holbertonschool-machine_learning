@@ -50,4 +50,3 @@ def identity_block(A_prev, filters):
     X = K.layers.Activation('relu')(X)
 
     return X
-
