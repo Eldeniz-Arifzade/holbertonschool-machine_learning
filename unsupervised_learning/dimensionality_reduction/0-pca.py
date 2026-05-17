@@ -19,5 +19,5 @@ def pca(X, var=0.95):
     """
     _, s, Vt = np.linalg.svd(X)
     explained = np.cumsum(s ** 2) / np.sum(s ** 2)
-    nd = np.argmax(explained >= var) + 1
+    nd = np.searchsorted(explained, var) + 1
     return Vt[:nd].T
