@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
-"""PCA module."""
-
+"""Module for performing Principal Component Analysis (PCA)."""
 import numpy as np
 
 
 def pca(X, var=0.95):
-    """Performs PCA on a dataset.
+    """Perform PCA on a dataset.
 
     Args:
-        X (numpy.ndarray): Dataset of shape (n, d) with centered features.
-        var (float): Fraction of variance to preserve.
+        X: numpy.ndarray of shape (n, d) where n is the number of data points
+           and d is the number of dimensions. All dimensions have a mean of 0.
+        var: fraction of the variance that the PCA transformation should
+             maintain (default 0.95).
 
     Returns:
-        numpy.ndarray: Weight matrix of shape (d, nd).
+        W: numpy.ndarray of shape (d, nd) — the weights matrix that maintains
+           var fraction of X's original variance, where nd is the new
+           dimensionality of the transformed X.
     """
-    _, S, Vt = np.linalg.svd(X)
-
-    explained_variance = S ** 2
-    ratio = np.cumsum(explained_variance) / np.sum(explained_variance)
-
-    nd = np.where(ratio > var)[0][0] + 1
-
-    return Vt.T[:, :nd]
+    _, s, Vt = np.linalg.svd(X)
+    explained = np.cumsum(s ** 2) / np.sum(s ** 2)
+    nd = np.argmax(explained >= var) + 1
+    return Vt[:nd].T
