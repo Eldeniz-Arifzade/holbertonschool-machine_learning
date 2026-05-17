@@ -8,9 +8,8 @@ def pca(X, var=0.95):
     """Performs PCA on a dataset.
 
     Args:
-        X (numpy.ndarray): Dataset of shape (n, d) where all features
-            are centered.
-        var (float): Fraction of variance that must be preserved.
+        X (numpy.ndarray): Dataset of shape (n, d) with centered features.
+        var (float): Fraction of variance to preserve.
 
     Returns:
         numpy.ndarray: Weight matrix of shape (d, nd).
@@ -18,11 +17,8 @@ def pca(X, var=0.95):
     _, S, Vt = np.linalg.svd(X)
 
     explained_variance = S ** 2
-    cumulative_variance = np.cumsum(explained_variance)
-    cumulative_variance /= cumulative_variance[-1]
+    ratio = np.cumsum(explained_variance) / np.sum(explained_variance)
 
-    nd = np.min(np.where(cumulative_variance >= var)) + 1
+    nd = np.where(ratio > var)[0][0] + 1
 
-    W = Vt.T[:, :nd]
-
-    return W
+    return Vt.T[:, :nd]
