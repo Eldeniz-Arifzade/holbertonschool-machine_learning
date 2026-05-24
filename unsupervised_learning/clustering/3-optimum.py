@@ -12,22 +12,29 @@ def optimum_k(X, kmin=1, kmax=None, iterations=1000):
 
     Args:
         X (numpy.ndarray): dataset of shape (n, d)
-        kmin (int): minimum number of clusters
-        kmax (int): maximum number of clusters
-        iterations (int): maximum iterations for K-means
+        kmin (int): minimum number of clusters to check
+        kmax (int): maximum number of clusters to check
+        iterations (int): maximum number of iterations for K-means
 
     Returns:
         tuple:
-            results (list): [(C, clss), ...] for each k
-            d_vars (list): variance differences
+            results: list containing (C, clss) for each k
+            d_vars: list containing variance differences
         (None, None): on failure
     """
     if (not isinstance(X, np.ndarray) or X.ndim != 2 or
             not isinstance(kmin, int) or kmin <= 0 or
-            kmax is None or
-            not isinstance(kmax, int) or kmax <= 0 or
-            kmax <= kmin or
             not isinstance(iterations, int) or iterations <= 0):
+        return None, None
+
+    n = X.shape[0]
+
+    if kmax is None:
+        kmax = n
+
+    if (not isinstance(kmax, int) or
+            kmax <= 0 or
+            kmin >= kmax):
         return None, None
 
     results = []
@@ -42,7 +49,6 @@ def optimum_k(X, kmin=1, kmax=None, iterations=1000):
         results.append((C, clss))
         variances.append(variance(X, C))
 
-    base_var = variances[0]
-    d_vars = [base_var - v for v in variances]
+    d_vars = [variances[0] - v for v in variances]
 
     return results, d_vars
