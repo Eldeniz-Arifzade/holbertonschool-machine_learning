@@ -13,17 +13,17 @@ def expectation_maximization(X, k, iterations=1000,
     """Performs the EM algorithm for a GMM
 
     Args:
-        X (numpy.ndarray): shape (n, d) containing the dataset
+        X (numpy.ndarray): shape (n, d) containing dataset
         k (int): number of clusters
-        iterations (int): maximum number of iterations
+        iterations (int): max number of iterations
         tol (float): tolerance for early stopping
-        verbose (bool): whether to print log likelihood updates
+        verbose (bool): whether to print log likelihoods
 
     Returns:
         tuple:
-            pi (numpy.ndarray): shape (k,) containing priors
-            m (numpy.ndarray): shape (k, d) containing means
-            S (numpy.ndarray): shape (k, d, d) covariances
+            pi (numpy.ndarray): shape (k,) priors
+            m (numpy.ndarray): shape (k, d) means
+            S (numpy.ndarray): shape (k, d, d) covariance matrices
             g (numpy.ndarray): shape (k, n) posterior probabilities
             l (float): log likelihood
         (None, None, None, None, None): on failure
@@ -40,27 +40,39 @@ def expectation_maximization(X, k, iterations=1000,
     if pi is None:
         return None, None, None, None, None
 
-    prev_l = 0
+    g, l = expectation(X, pi, m, S)
 
-    for i in range(iterations + 1):
-        g, l = expectation(X, pi, m, S)
+    if g is None:
+        return None, None, None, None, None
+
+    for i in range(iterations):
+        if verbose and (i % 10 == 0):
+            print("Log Likelihood after {} iterations: {:.5f}"
+                  .format(i, l))
+
+        pi, m, S = maximization(X, g)
+
+        if pi is None:
+            return None, None, None, None, None
+
+        g, new_l = expectation(X, pi, m, S)
 
         if g is None:
             return None, None, None, None, None
 
-        if verbose and (i % 10 == 0 or i == iterations):
-            print("Log Likelihood after {} iterations: {:.5f}"
-                  .format(i, l))
+        if abs(new_l - l) <= tol:
+            l = new_l
 
-        if i != 0 and abs(l - prev_l) <= tol:
+            if verbose:
+                print("Log Likelihood after {} iterations: {:.5f}"
+                      .format(i + 1, l))
             break
 
-        if i < iterations:
-            pi, m, S = maximization(X, g)
+        l = new_l
 
-            if pi is None:
-                return None, None, None, None, None
-
-            prev_l = l
+    else:
+        if verbose:
+            print("Log Likelihood after {} iterations: {:.5f}"
+                  .format(iterations, l))
 
     return pi, m, S, g, l
