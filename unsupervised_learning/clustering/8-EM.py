@@ -1,78 +1,72 @@
 #!/usr/bin/env python3
-"""Performs expectation maximization for a GMM"""
+"""Finds the best number of clusters using BIC"""
 
 import numpy as np
 
-initialize = __import__('4-initialize').initialize
-expectation = __import__('6-expectation').expectation
-maximization = __import__('7-maximization').maximization
+expectation_maximization = __import__(
+    '8-EM').expectation_maximization
 
 
-def expectation_maximization(X, k, iterations=1000,
-                             tol=1e-5, verbose=False):
-    """Performs the EM algorithm for a GMM
+def BIC(X, kmin=1, kmax=None, iterations=1000,
+        tol=1e-5, verbose=False):
+    """Finds the best number of clusters for a GMM using BIC
 
     Args:
         X (numpy.ndarray): shape (n, d) containing dataset
-        k (int): number of clusters
-        iterations (int): max number of iterations
-        tol (float): tolerance for early stopping
-        verbose (bool): whether to print log likelihoods
+        kmin (int): minimum number of clusters
+        kmax (int): maximum number of clusters
+        iterations (int): maximum iterations for EM
+        tol (float): tolerance for EM
+        verbose (bool): verbose mode
 
     Returns:
         tuple:
-            pi (numpy.ndarray): shape (k,) priors
-            m (numpy.ndarray): shape (k, d) means
-            S (numpy.ndarray): shape (k, d, d) covariance matrices
-            g (numpy.ndarray): shape (k, n) posterior probabilities
-            l (float): log likelihood
-        (None, None, None, None, None): on failure
+            best_k (int): optimal number of clusters
+            best_result (tuple): (pi, m, S)
+            l (numpy.ndarray): log likelihoods
+            b (numpy.ndarray): BIC values
+        (None, None, None, None): on failure
     """
     if (not isinstance(X, np.ndarray) or X.ndim != 2 or
-            not isinstance(k, int) or k <= 0 or
+            not isinstance(kmin, int) or kmin <= 0 or
             not isinstance(iterations, int) or iterations <= 0 or
             not isinstance(tol, float) or tol < 0 or
             not isinstance(verbose, bool)):
-        return None, None, None, None, None
+        return None, None, None, None
 
-    pi, m, S = initialize(X, k)
+    n, d = X.shape
 
-    if pi is None:
-        return None, None, None, None, None
+    if kmax is None:
+        kmax = n
 
-    g, likelihood = expectation(X, pi, m, S)
+    if (not isinstance(kmax, int) or
+            kmax <= 0 or
+            kmin >= kmax):
+        return None, None, None, None
 
-    if g is None:
-        return None, None, None, None, None
+    ks = kmax - kmin + 1
 
-    for i in range(iterations):
-        if verbose and (i % 10 == 0):
-            print("Log Likelihood after {} iterations: {:.5f}"
-                  .format(i, likelihood))
+    l = np.zeros(ks)
+    b = np.zeros(ks)
 
-        pi, m, S = maximization(X, g)
+    best_k = None
+    best_result = None
+
+    for i, k in enumerate(range(kmin, kmax + 1)):
+        pi, m, S, g, likelihood = expectation_maximization(
+            X, k, iterations, tol, verbose)
 
         if pi is None:
-            return None, None, None, None, None
+            return None, None, None, None
 
-        g, new_l = expectation(X, pi, m, S)
+        l[i] = likelihood
 
-        if g is None:
-            return None, None, None, None, None
+        p = (k - 1) + (k * d) + (k * d * (d + 1) / 2)
 
-        if abs(new_l - likelihood) <= tol:
-            likelihood = new_l
+        b[i] = (p * np.log(n)) - (2 * likelihood)
 
-            if verbose:
-                print("Log Likelihood after {} iterations: {:.5f}"
-                      .format(i + 1, likelihood))
-            break
+        if best_k is None or b[i] < b[best_k - kmin]:
+            best_k = k
+            best_result = (pi, m, S)
 
-        likelihood = new_l
-
-    else:
-        if verbose:
-            print("Log Likelihood after {} iterations: {:.5f}"
-                  .format(iterations, likelihood))
-
-    return pi, m, S, g, likelihood
+    return best_k, best_result, l, b
