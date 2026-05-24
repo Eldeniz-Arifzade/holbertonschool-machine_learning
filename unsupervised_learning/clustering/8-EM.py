@@ -2,7 +2,6 @@
 """Finds the best number of clusters using BIC"""
 
 import numpy as np
-
 expectation_maximization = __import__('8-EM').expectation_maximization
 
 
