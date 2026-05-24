@@ -12,19 +12,19 @@ def BIC(X, kmin=1, kmax=None, iterations=1000,
     """Finds the best number of clusters for a GMM using BIC
 
     Args:
-        X (numpy.ndarray): shape (n, d) containing dataset
+        X (numpy.ndarray): dataset of shape (n, d)
         kmin (int): minimum number of clusters
         kmax (int): maximum number of clusters
         iterations (int): maximum iterations for EM
         tol (float): tolerance for EM
-        verbose (bool): verbose mode
+        verbose (bool): verbose mode for EM
 
     Returns:
         tuple:
             best_k (int): optimal number of clusters
             best_result (tuple): (pi, m, S)
-            l (numpy.ndarray): log likelihoods
-            b (numpy.ndarray): BIC values
+            log_likelihoods (numpy.ndarray): log likelihoods
+            bics (numpy.ndarray): BIC values
         (None, None, None, None): on failure
     """
     if (not isinstance(X, np.ndarray) or X.ndim != 2 or
@@ -44,29 +44,29 @@ def BIC(X, kmin=1, kmax=None, iterations=1000,
             kmin >= kmax):
         return None, None, None, None
 
-    ks = kmax - kmin + 1
+    size = kmax - kmin + 1
 
-    l = np.zeros(ks)
-    b = np.zeros(ks)
+    log_likelihoods = np.zeros(size)
+    bics = np.zeros(size)
 
     best_k = None
     best_result = None
 
     for i, k in enumerate(range(kmin, kmax + 1)):
-        pi, m, S, g, likelihood = expectation_maximization(
+        pi, m, S, g, log_likelihood = expectation_maximization(
             X, k, iterations, tol, verbose)
 
         if pi is None:
             return None, None, None, None
 
-        l[i] = likelihood
+        log_likelihoods[i] = log_likelihood
 
         p = (k - 1) + (k * d) + (k * d * (d + 1) / 2)
 
-        b[i] = (p * np.log(n)) - (2 * likelihood)
+        bics[i] = (p * np.log(n)) - (2 * log_likelihood)
 
-        if best_k is None or b[i] < b[best_k - kmin]:
+        if best_k is None or bics[i] < bics[best_k - kmin]:
             best_k = k
             best_result = (pi, m, S)
 
-    return best_k, best_result, l, b
+    return best_k, best_result, log_likelihoods, bics
