@@ -48,11 +48,13 @@ def expectation_maximization(X, k, iterations=1000,
         if g is None:
             return None, None, None, None, None
 
-        if verbose and (i % 10 == 0 or i == iterations):
+        converged = i != 0 and abs(l - prev_l) <= tol
+
+        if verbose and (i % 10 == 0 or i == iterations or converged):
             print("Log Likelihood after {} iterations: {:.5f}"
                   .format(i, l))
 
-        if i != 0 and abs(l - prev_l) <= tol:
+        if converged:
             break
 
         if i < iterations:
