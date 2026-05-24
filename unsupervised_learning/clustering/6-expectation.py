@@ -41,9 +41,9 @@ def expectation(X, pi, m, S):
 
         g = probs / total
 
-        l = np.sum(np.log(total))
+        likelihood = np.sum(np.log(total))
 
-        return g, l
+        return g, likelihood
 
     except Exception:
         return None, None
