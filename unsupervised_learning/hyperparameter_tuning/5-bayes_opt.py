@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env python3
 """Module for Bayesian Optimization implementation."""
 import numpy as np
 from scipy.stats import norm
