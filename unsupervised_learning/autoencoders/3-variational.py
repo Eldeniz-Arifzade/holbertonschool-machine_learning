@@ -23,25 +23,24 @@ class Sampling(keras.layers.Layer):
         return z_mean + tf.exp(z_log_var / 2) * epsilon
 
 
-class KLDivergenceLayer(keras.layers.Layer):
-    """Layer that adds KL divergence loss to the model."""
+class KLLossLayer(keras.layers.Layer):
+    """Layer that computes and registers KL divergence loss, passing z through."""
 
     def call(self, inputs):
-        """Add KL divergence as a layer loss and pass inputs through.
+        """Compute KL loss and add it; return z unchanged.
 
         Args:
-            inputs (tuple): (z_mean, z_log_var) tensors.
+            inputs (list): [z, z_mean, z_log_var] tensors.
 
         Returns:
-            tuple: The inputs unchanged.
+            tensor: z unchanged.
         """
-        z_mean, z_log_var = inputs
-        kl_loss = -0.5 * tf.reduce_sum(
-            1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var),
-            axis=-1
+        z, z_mean, z_log_var = inputs
+        kl_loss = -0.5 * tf.reduce_mean(
+            1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
         )
-        self.add_loss(tf.reduce_mean(kl_loss))
-        return inputs
+        self.add_loss(kl_loss)
+        return z
 
 
 def autoencoder(input_dims, hidden_layers, latent_dims):
@@ -60,7 +59,7 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
             - auto: the full autoencoder model compiled with adam and
               binary cross-entropy + KL divergence loss
     """
-    # Encoder
+    # --- Encoder ---
     encoder_input = keras.Input(shape=(input_dims,))
     x = encoder_input
     for nodes in hidden_layers:
@@ -70,7 +69,7 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     z = Sampling()([z_mean, z_log_var])
     encoder = keras.Model(encoder_input, [z, z_mean, z_log_var])
 
-    # Decoder
+    # --- Decoder ---
     decoder_input = keras.Input(shape=(latent_dims,))
     x = decoder_input
     for nodes in reversed(hidden_layers):
@@ -78,12 +77,23 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     decoder_output = keras.layers.Dense(input_dims, activation='sigmoid')(x)
     decoder = keras.Model(decoder_input, decoder_output)
 
-    # Autoencoder with KL loss injected via a layer
+    # --- Autoencoder: inline graph so KLLossLayer is a direct node ---
     auto_input = keras.Input(shape=(input_dims,))
-    z, z_mean, z_log_var = encoder(auto_input)
-    z_mean, z_log_var = KLDivergenceLayer()([z_mean, z_log_var])
-    reconstructed = decoder(z)
-    auto = keras.Model(auto_input, reconstructed)
+    # Replay encoder layers directly (not as sub-model) so losses propagate
+    h = auto_input
+    for nodes in hidden_layers:
+        h = keras.layers.Dense(nodes, activation='relu')(h)
+    z_mean_auto = keras.layers.Dense(latent_dims, activation=None)(h)
+    z_log_var_auto = keras.layers.Dense(latent_dims, activation=None)(h)
+    z_auto = Sampling()([z_mean_auto, z_log_var_auto])
+    # KL loss registered via layer node in the graph
+    z_auto = KLLossLayer()([z_auto, z_mean_auto, z_log_var_auto])
+    # Replay decoder layers directly
+    d = z_auto
+    for nodes in reversed(hidden_layers):
+        d = keras.layers.Dense(nodes, activation='relu')(d)
+    auto_output = keras.layers.Dense(input_dims, activation='sigmoid')(d)
+    auto = keras.Model(auto_input, auto_output)
     auto.compile(optimizer='adam', loss='binary_crossentropy')
 
     return encoder, decoder, auto
