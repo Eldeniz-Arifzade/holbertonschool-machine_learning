@@ -1,3 +1,10 @@
+#!/usr/bin/env
+"""Module for Bayesian Optimization implementation."""
+import numpy as np
+from scipy.stats import norm
+GP = __import__('2-gp').GaussianProcess
+
+
 def optimize(self, iterations=100):
     """
     Optimizes the black-box function
