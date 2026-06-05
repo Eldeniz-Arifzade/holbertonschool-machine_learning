@@ -74,15 +74,17 @@ class BayesianOptimization:
                 - Y_opt (numpy.ndarray): Shape (1,), the optimal function
                   value.
         """
+        sampled = []
         for _ in range(iterations):
             X_next, _ = self.acquisition()
 
-            already_sampled = np.any(
-                np.isclose(self.gp.X, X_next)
+            already_sampled = any(
+                np.isclose(X_next[0], s) for s in sampled
             )
             if already_sampled:
                 break
 
+            sampled.append(X_next[0])
             Y_next = self.f(X_next)
             self.gp.update(X_next, Y_next)
 
