@@ -8,7 +8,7 @@ class Sampling(keras.layers.Layer):
     """Reparameterization sampling layer for the VAE latent space."""
 
     def call(self, inputs):
-        """Sample from the latent distribution using the reparameterization trick.
+        """Sample z using the reparameterization trick.
 
         Args:
             inputs (tuple): (z_mean, z_log_var) tensors.
@@ -21,6 +21,27 @@ class Sampling(keras.layers.Layer):
         dim = tf.shape(z_mean)[1]
         epsilon = tf.random.normal(shape=(batch, dim))
         return z_mean + tf.exp(z_log_var / 2) * epsilon
+
+
+class KLDivergenceLayer(keras.layers.Layer):
+    """Layer that adds KL divergence loss to the model."""
+
+    def call(self, inputs):
+        """Add KL divergence as a layer loss and pass inputs through.
+
+        Args:
+            inputs (tuple): (z_mean, z_log_var) tensors.
+
+        Returns:
+            tuple: The inputs unchanged.
+        """
+        z_mean, z_log_var = inputs
+        kl_loss = -0.5 * tf.reduce_sum(
+            1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var),
+            axis=-1
+        )
+        self.add_loss(tf.reduce_mean(kl_loss))
+        return inputs
 
 
 def autoencoder(input_dims, hidden_layers, latent_dims):
@@ -57,17 +78,12 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     decoder_output = keras.layers.Dense(input_dims, activation='sigmoid')(x)
     decoder = keras.Model(decoder_input, decoder_output)
 
-    # Autoencoder with KL divergence loss
+    # Autoencoder with KL loss injected via a layer
     auto_input = keras.Input(shape=(input_dims,))
     z, z_mean, z_log_var = encoder(auto_input)
+    z_mean, z_log_var = KLDivergenceLayer()([z_mean, z_log_var])
     reconstructed = decoder(z)
     auto = keras.Model(auto_input, reconstructed)
-
-    # KL divergence loss added to the model
-    kl_loss = -0.5 * tf.reduce_sum(
-        1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var), axis=-1
-    )
-    auto.add_loss(tf.reduce_mean(kl_loss))
     auto.compile(optimizer='adam', loss='binary_crossentropy')
 
     return encoder, decoder, auto
