@@ -52,7 +52,8 @@ class Simple_GAN(keras.Model):
         self.generator.optimizer = keras.optimizers.Adam(
             learning_rate=self.learning_rate, beta_1=self.beta_1,
             beta_2=self.beta_2)
-        self.generator.compile(optimizer=generator.optimizer, loss=generator.loss)
+        self.generator.compile(optimizer=generator.optimizer,
+                               loss=generator.loss)
 
         # define the discriminator loss and optimizer
         self.discriminator.loss = lambda x, y: (
@@ -61,7 +62,8 @@ class Simple_GAN(keras.Model):
         self.discriminator.optimizer = keras.optimizers.Adam(
             learning_rate=self.learning_rate, beta_1=self.beta_1,
             beta_2=self.beta_2)
-        self.discriminator.compile(optimizer=discriminator.optimizer, loss=discriminator.loss)
+        self.discriminator.compile(optimizer=discriminator.optimizer, 
+                                   loss=discriminator.loss)
 
     def get_fake_sample(self, size=None, training=False):
         """Generate a batch of fake examples.
