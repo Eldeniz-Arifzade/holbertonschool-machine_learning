@@ -83,23 +83,35 @@ class WGAN_GP(keras.Model):
             with tf.GradientTape() as disc_tape:
                 real_sample = self.get_real_sample()
                 fake_sample = self.get_fake_sample(training=True)
-                interpolated = self.get_interpolated_sample(
-                    real_sample, fake_sample)
+                interpolated = self.get_interpolated_sample(real_sample, fake_sample)
+    
+                # old discriminator loss (Wasserstein part)
                 discr_loss = self.discriminator.loss(
-                    real_sample, fake_sample)
+                    self.discriminator(real_sample, training=True),
+                    self.discriminator(fake_sample, training=True)
+                )
+    
+                # gradient penalty and penalized discriminator loss
                 gp = self.gradient_penalty(interpolated)
                 new_discr_loss = discr_loss + self.lambda_gp * gp
+    
             disc_grads = disc_tape.gradient(
-                new_discr_loss,
-                self.discriminator.trainable_variables)
+                new_discr_loss, self.discriminator.trainable_variables
+            )
             self.discriminator.optimizer.apply_gradients(
-                zip(disc_grads, self.discriminator.trainable_variables))
+                zip(disc_grads, self.discriminator.trainable_variables)
+            )
+    
         with tf.GradientTape() as gen_tape:
             fake_sample = self.get_fake_sample(training=True)
-            gen_loss = -tf.reduce_mean(
-                self.discriminator(fake_sample, training=False))
-        gen_grads = gen_tape.gradient(
-            gen_loss, self.generator.trainable_variables)
+            gen_loss = self.generator.loss(
+                self.discriminator(fake_sample, training=False)
+            )
+    
+        gen_grads = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
         self.generator.optimizer.apply_gradients(
-            zip(gen_grads, self.generator.trainable_variables))
-        return {"discr_loss": new_discr_loss, "gen_loss": gen_loss, "gp": gp}
+            zip(gen_grads, self.generator.trainable_variables)
+        )
+    
+        # IMPORTANT: return discr_loss (not new_discr_loss)
+        return {"discr_loss": discr_loss, "gen_loss": gen_loss, "gp": gp}
