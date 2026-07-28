@@ -11,10 +11,8 @@ def gensim_to_keras(model):
     embedding = tf.keras.layers.Embedding(
         input_dim=vectors.shape[0],
         output_dim=vectors.shape[1],
+        weights=[vectors],
         trainable=True
     )
-
-    embedding.build()
-    embedding.set_weights([vectors])
 
     return embedding
