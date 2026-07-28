@@ -1,54 +1,88 @@
 #!/usr/bin/env python3
-"""Class dataset"""
+"""Defines the Dataset class for loading and prepping a translation dataset"""
+import tensorflow as tf
+import transformers
+from setup import load_pt2en
 
-import tensorflow.compat.v2 as tf
-import tensorflow_datasets as tfds
 
-
-class Dataset():
-    """Class Dataset"""
+class Dataset:
+    """Loads and preps a dataset for machine translation"""
 
     def __init__(self):
         """Class constructor"""
-        examples, metadata = tfds.load('ted_hrlr_translate/pt_to_en',
-                                       with_info=True,
-                                       as_supervised=True)
-        self.data_train, self.data_valid = examples['train'], \
-            examples['validation']
-
-        self.tokenizer_pt, self.tokenizer_en = \
-            self.tokenize_dataset(self.data_train)
+        self.data_train = load_pt2en('train')
+        self.data_valid = load_pt2en('validation')
+        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
+            self.data_train)
+        self.data_train = self.data_train.map(self.tf_encode)
+        self.data_valid = self.data_valid.map(self.tf_encode)
 
     def tokenize_dataset(self, data):
-        """tokenize data """
+        """Creates sub-word tokenizers for our dataset
 
-        tokenizer_pt = tfds.features.text.SubwordTextEncoder.build_from_corpus(
-            (pt.numpy() for pt, en in data),
-            target_vocab_size=2 ** 15)
+        Args:
+            data: a tf.data.Dataset whose examples are formatted as a
+                tuple (pt, en)
 
-        tokenizer_en = tfds.features.text.SubwordTextEncoder.build_from_corpus(
-            (en.numpy() for pt, en in data),
-            target_vocab_size=2 ** 15)
+        Returns:
+            tokenizer_pt, tokenizer_en
+        """
+        pt_sentences = []
+        en_sentences = []
+        for pt, en in data.as_numpy_iterator():
+            pt_sentences.append(pt.decode('utf-8'))
+            en_sentences.append(en.decode('utf-8'))
+
+        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
+            'neuralmind/bert-base-portuguese-cased')
+        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
+            'bert-base-uncased')
+
+        tokenizer_pt = tokenizer_pt.train_new_from_iterator(
+            pt_sentences, vocab_size=2 ** 13)
+        tokenizer_en = tokenizer_en.train_new_from_iterator(
+            en_sentences, vocab_size=2 ** 13)
 
         return tokenizer_pt, tokenizer_en
 
     def encode(self, pt, en):
-        """ encoding """
+        """Encodes a translation into tokens
 
-        lang1 = [self.tokenizer_pt.vocab_size] + self.tokenizer_pt.encode(
-            pt.numpy()) + [self.tokenizer_pt.vocab_size + 1]
+        Args:
+            pt: tf.Tensor containing the Portuguese sentence
+            en: tf.Tensor containing the corresponding English sentence
 
-        lang2 = [self.tokenizer_en.vocab_size] + self.tokenizer_en.encode(
-            en.numpy()) + [self.tokenizer_en.vocab_size + 1]
+        Returns:
+            pt_tokens, en_tokens
+                pt_tokens is a list containing the Portuguese tokens
+                en_tokens is a list containing the English tokens
+        """
+        pt_vocab_size = self.tokenizer_pt.vocab_size
+        en_vocab_size = self.tokenizer_en.vocab_size
 
-        return lang1, lang2
+        pt_tokens = self.tokenizer_pt.encode(
+            pt.numpy().decode('utf-8'), add_special_tokens=False)
+        en_tokens = self.tokenizer_en.encode(
+            en.numpy().decode('utf-8'), add_special_tokens=False)
+
+        pt_tokens = [pt_vocab_size] + pt_tokens + [pt_vocab_size + 1]
+        en_tokens = [en_vocab_size] + en_tokens + [en_vocab_size + 1]
+
+        return pt_tokens, en_tokens
 
     def tf_encode(self, pt, en):
-        """ tf_encode"""
-        result_pt, result_en = tf.py_function(self.encode,
-                                              [pt, en],
-                                              [tf.int64, tf.int64])
-        result_pt.set_shape([None])
-        result_en.set_shape([None])
+        """Acts as a tensorflow wrapper for the encode instance method
 
-        return result_pt, result_en
+        Args:
+            pt: tf.Tensor containing the Portuguese sentence
+            en: tf.Tensor containing the corresponding English sentence
+
+        Returns:
+            pt_tokens, en_tokens
+        """
+        pt_tokens, en_tokens = tf.py_function(
+            func=self.encode, inp=[pt, en], Tout=[tf.int64, tf.int64])
+        pt_tokens.set_shape([None])
+        en_tokens.set_shape([None])
+
+        return pt_tokens, en_tokens
