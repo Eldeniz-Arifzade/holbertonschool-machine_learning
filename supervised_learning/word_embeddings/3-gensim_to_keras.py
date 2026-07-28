@@ -1,25 +1,11 @@
 #!/usr/bin/env python3
-"""Converts Gensim word vectors to a Keras embedding layer."""
-
-import tensorflow as tf
-
+"""Gensim to keras"""
 
 def gensim_to_keras(model):
-    """Convert a trained Gensim Word2Vec model to a Keras layer.
-
-    Args:
-        model: Trained Gensim Word2Vec model.
-
-    Returns:
-        A trainable Keras Embedding layer initialized with the vectors.
     """
-    vectors = model.wv.vectors
-    embedding = tf.keras.layers.Embedding(
-        input_dim=vectors.shape[0],
-        output_dim=vectors.shape[1],
-        trainable=True,
-    )
-    embedding.build()
-    embedding.set_weights([vectors])
-
-    return embedding
+    gensim to keras function
+    Args:
+        model: trained gensim word2vec models
+    Returns: trainable keras Embedding
+    """
+    return model.wv.get_keras_embedding(train_embeddings=False)
