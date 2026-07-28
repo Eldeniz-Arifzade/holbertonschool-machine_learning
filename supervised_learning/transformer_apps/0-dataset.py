@@ -1,43 +1,32 @@
 #!/usr/bin/env python3
-"""Defines the Dataset class for loading and prepping a translation dataset"""
-import transformers
-from setup import load_pt2en
+"""Class Dataset"""
+
+import tensorflow.compat.v2 as tf
+import tensorflow_datasets as tfds
 
 
-class Dataset:
-    """Loads and preps a dataset for machine translation"""
+class Dataset():
+    """ class dataset """
 
     def __init__(self):
-        """Class constructor"""
-        self.data_train = load_pt2en('train')
-        self.data_valid = load_pt2en('validation')
+        """ initialize dataset """
+
+        examples, metadata = tfds.load('ted_hrlr_translate/pt_to_en',
+                                       with_info=True,
+                                       as_supervised=True)
+
+        self.data_train, self.data_valid = examples['train'], \
+            examples['validation']
         self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
             self.data_train)
 
     def tokenize_dataset(self, data):
-        """Creates sub-word tokenizers for our dataset
+        """tokenize data """
 
-        Args:
-            data: a tf.data.Dataset whose examples are formatted as a
-                tuple (pt, en)
+        tokenizer_en = tfds.features.text.SubwordTextEncoder.build_from_corpus(
+            (en.numpy() for pt, en in data), target_vocab_size=2 ** 15)
 
-        Returns:
-            tokenizer_pt, tokenizer_en
-        """
-        pt_sentences = []
-        en_sentences = []
-        for pt, en in data.as_numpy_iterator():
-            pt_sentences.append(pt.decode('utf-8'))
-            en_sentences.append(en.decode('utf-8'))
-
-        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
-            'neuralmind/bert-base-portuguese-cased')
-        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
-            'bert-base-uncased')
-
-        tokenizer_pt = tokenizer_pt.train_new_from_iterator(
-            pt_sentences, vocab_size=2 ** 13)
-        tokenizer_en = tokenizer_en.train_new_from_iterator(
-            en_sentences, vocab_size=2 ** 13)
+        tokenizer_pt = tfds.features.text.SubwordTextEncoder.build_from_corpus(
+            (pt.numpy() for pt, en in data), target_vocab_size=2 ** 15)
 
         return tokenizer_pt, tokenizer_en
