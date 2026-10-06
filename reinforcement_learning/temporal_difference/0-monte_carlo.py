@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Estimate state values using first-visit Monte Carlo prediction."""
+import numpy as np
 
 
 def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
