@@ -3,18 +3,20 @@
 import numpy as np
 
 
-def policy(matrix, weight):
-    """Compute a numerically stable softmax policy.
+def policy_gradient(state, weight):
+    """Sample an action and compute its log-policy gradient.
 
     Args:
-        matrix: State matrix with shape (m, n).
+        state: One observation with shape (n,) or (1, n).
         weight: Weight matrix with shape (n, a).
 
     Returns:
-        Action probabilities with shape (m, a).
+        A tuple containing the sampled action and its gradient with
+        respect to weight, with shape (n, a).
     """
-    scores = np.matmul(matrix, weight)
-    scores -= np.max(scores, axis=-1, keepdims=True)
-    probabilities = np.exp(scores)
-    probabilities /= np.sum(probabilities, axis=-1, keepdims=True)
-    return probabilities
+    probabilities = policy(state.reshape(1, -1), weight)[0]
+    action = np.random.choice(probabilities.size, p=probabilities)
+    dlog = -probabilities
+    dlog[action] += 1
+    gradient = np.outer(state, dlog)
+    return action, gradient
